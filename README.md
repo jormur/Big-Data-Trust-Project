@@ -1,5 +1,5 @@
 # Big-Data-Trust-Project
-## Current Goal: Midterm Proposa;
+## Current Goal: Midterm Proposal
 - [x] Select the variables
 - [ ] Clean the data
 - [ ] First LASSO selection
