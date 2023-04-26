@@ -4,7 +4,6 @@ library(dplyr)
 library(tidyverse)
 
 ###  ROUND 10 (2020 - 2022)  ###
-## test
 
 round_10 <- read.csv("ESS10.csv")
 
