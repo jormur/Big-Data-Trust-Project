@@ -106,8 +106,7 @@ summary(full_dataset)
 
 #from the summary we can see that the two variables (imsmetn, imdfetn) present NA values, therefore we are going to eliminate those obs from the full dataset using na.omit()
 
-na.omit(full_dataset$imsmetn) #DOES NOT WORK(?)
-na.omit(full_dataset$imdfetn)
+full_dataset <- full_dataset %>% filter(complete.cases(.))
 
 summary(full_dataset)
 
