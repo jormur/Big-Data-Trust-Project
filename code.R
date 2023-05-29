@@ -369,11 +369,18 @@ angle <- 90 - 360 * (label_data$id-0.5) /number_of_bar
 label_data$hjust <- ifelse( angle < -90, 1, 0)
 label_data$angle <- ifelse(angle < -90, angle+180, angle)
 
+# prepare a data frame for base lines
+base_data <- trust_df %>% 
+  group_by(cntry) %>% 
+  summarize(start=min(id), end=max(id) - empty_bar) %>% 
+  rowwise() %>% 
+  mutate(title=mean(c(start, end)))
+
 
 # Make the plot
 ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +  
   geom_bar(stat="identity", alpha=0.5) +
-  ylim(-20,30) +
+  ylim(-20,20) +
   theme_minimal() +
   theme(
     legend.position = "none",
@@ -383,16 +390,17 @@ ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +
     plot.margin = unit(rep(-1,4), "cm") 
   ) +
   coord_polar() + 
-  geom_text(data=label_data, aes(x=id, y=level_trst+10, label = trust_for, hjust=hjust), color="black", fontface="bold",alpha=0.5, size=3, angle= label_data$angle, inherit.aes = FALSE )
-### TO IMPROVE #####
+  geom_text(data=label_data, aes(x=id, y=level_trst +1, label = trust_for, hjust=hjust), color="black",alpha=0.7, size=3, angle= label_data$angle, inherit.aes = FALSE ) +
+  
+  geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+  geom_text(data=base_data, aes(x = title, y = -8, label=cntry), hjust=c(rep(0.4,14)), colour = "black", alpha=1, size=5, inherit.aes = FALSE)
+
+
 
 
 # Evolution of trust overtime
 
 # We prepare our dataframe
-install.packages("viridis")
-install.packages("viridisLite")
-install.packages("hrbrthemes")
 
 library(viridis)
 library(hrbrthemes)
