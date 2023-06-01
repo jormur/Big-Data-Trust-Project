@@ -1,6 +1,7 @@
 # Big Data Trust & Media Project
-## Current Goal: Midterm Proposal
+## Current Goal: Final Presentation
 - [x] Select the variables
-- [ ] Clean the data
-- [ ] First LASSO selection
-- [ ] Preliminary hypothesis testing with simple regression relations between primary variables
+- [x] Clean the data
+- [ ] LASSO selection
+- [ ] Data Visualization
+- [ ] Hypothesis Testing
