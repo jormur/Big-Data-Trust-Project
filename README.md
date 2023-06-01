@@ -2,6 +2,8 @@
 ## Current Goal: Final Presentation
 - [x] Select the variables
 - [x] Clean the data
-- [ ] LASSO selection
+- [ ] Merge Data Sources
+- [X] LASSO selection
+- [ ] Fixed effects estimation
 - [ ] Data Visualization
 - [ ] Hypothesis Testing
