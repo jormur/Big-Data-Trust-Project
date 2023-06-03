@@ -13,8 +13,11 @@ library(maps)
 library(mapproj)
 
 ### IMPORTING DATA TO R ########
+options(warn = -1)
 
-setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+#setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
 
 full_dataset <- read.csv("ESS-Data-Wizard.csv")
 
@@ -119,23 +122,23 @@ full_dataset$proddate <- as.Date(full_dataset$proddate, "%d.%m.%Y")
 full_dataset$netustm <- as.numeric(full_dataset$netustm)
 full_dataset$nwspol <- as.numeric(full_dataset$nwspol)
 
-full_dataset$pstplonl <- as.factor(full_dataset$pstplonl)
-full_dataset$sgnptit <- as.factor(full_dataset$sgnptit)
-full_dataset$vote <- as.factor(full_dataset$vote)
-full_dataset$brncntr <- as.factor(full_dataset$brncntr)
-full_dataset$crmvct <- as.factor(full_dataset$crmvct)
-full_dataset$ctzcntr <- as.factor(full_dataset$ctzcntr)
-full_dataset$dscrage <- as.factor(full_dataset$dscrage)
-full_dataset$dscrdsb <- as.factor(full_dataset$dscrdsb)
-full_dataset$dscretn <- as.factor(full_dataset$dscretn)
-full_dataset$dscrgnd <- as.factor(full_dataset$dscrgnd)
-full_dataset$dscrgrp <- as.factor(full_dataset$dscrgrp)
-full_dataset$dscrlng <- as.factor(full_dataset$dscrlng)
-full_dataset$dscrntn <- as.factor(full_dataset$dscrntn)
-full_dataset$dscrrce <- as.factor(full_dataset$dscrrce)
-full_dataset$dscrrlg <- as.factor(full_dataset$dscrrlg)
-full_dataset$dscrsex <- as.factor(full_dataset$dscrsex)
-full_dataset$gndr <- as.factor(full_dataset$gndr)
+# full_dataset$pstplonl <- as.factor(full_dataset$pstplonl)
+# full_dataset$sgnptit <- as.factor(full_dataset$sgnptit)
+# full_dataset$vote <- as.factor(full_dataset$vote)
+# full_dataset$brncntr <- as.factor(full_dataset$brncntr)
+# full_dataset$crmvct <- as.factor(full_dataset$crmvct)
+# full_dataset$ctzcntr <- as.factor(full_dataset$ctzcntr)
+# full_dataset$dscrage <- as.factor(full_dataset$dscrage)
+# full_dataset$dscrdsb <- as.factor(full_dataset$dscrdsb)
+# full_dataset$dscretn <- as.factor(full_dataset$dscretn)
+# full_dataset$dscrgnd <- as.factor(full_dataset$dscrgnd)
+# full_dataset$dscrgrp <- as.factor(full_dataset$dscrgrp)
+# full_dataset$dscrlng <- as.factor(full_dataset$dscrlng)
+# full_dataset$dscrntn <- as.factor(full_dataset$dscrntn)
+# full_dataset$dscrrce <- as.factor(full_dataset$dscrrce)
+# full_dataset$dscrrlg <- as.factor(full_dataset$dscrrlg)
+# full_dataset$dscrsex <- as.factor(full_dataset$dscrsex)
+# full_dataset$gndr <- as.factor(full_dataset$gndr)
 
 
 full_dataset$trstep<-as.numeric(full_dataset$trstep)
@@ -152,47 +155,129 @@ summary(full_dataset)
 
 #Finally, we can create other variables, for example agerange and year
 
-full_dataset <- full_dataset %>%
-  mutate(agerange = case_when(agea >= 70 ~ ">=70",
-                               agea < 70 & agea >= 60 ~ "60-69",
-                               agea < 60 & agea >= 50 ~ "50-59",
-                               agea < 50 & agea >= 40 ~ "40-49",
-                               agea < 40 & agea >= 30 ~ "30-39",
-                               agea < 30 & agea >= 18 ~ "18-29",
-                               TRUE ~ "<18"))
+# full_dataset <- full_dataset %>%
+#   mutate(agerange = case_when(agea >= 70 ~ ">=70",
+#                                agea < 70 & agea >= 60 ~ "60-69",
+#                                agea < 60 & agea >= 50 ~ "50-59",
+#                                agea < 50 & agea >= 40 ~ "40-49",
+#                                agea < 40 & agea >= 30 ~ "30-39",
+#                                agea < 30 & agea >= 18 ~ "18-29",
+#                                TRUE ~ "<18"))
 
 
 # We want R to recognize the new variable agerange as factor. We will directly write over the variable.
 # The reason behind is that is easier to work with factor variables rather than character variables
 # Moreover, for some of these variables the order of the different levels actually matters to us.
-full_dataset$agerange <- as.factor(full_dataset$agerange)
+# full_dataset$agerange <- as.factor(full_dataset$agerange)
 
 
 # We make sure that the variable is now recognized as factor, using the class() function
-class(full_dataset$agerange)
+# class(full_dataset$agerange)
 
 
 # Now, what we have to do is to display the levels and eventually set the order we want them to be
-levels(full_dataset$agerange)
+# levels(full_dataset$agerange)
 
 # As we can see, the levels are not in the right order. To change them, we rewrite over the variables and set the order manually
-full_dataset$agerange <- factor((full_dataset$agerange), levels = c("<18","18-29", "30-39","40-49", "50-59","60-69",">=70"))
+# full_dataset$agerange <- factor((full_dataset$agerange), levels = c("<18","18-29", "30-39","40-49", "50-59","60-69",">=70"))
 
 
 # We check that everything is good
-levels(full_dataset$agerange)
+# levels(full_dataset$agerange)
 
 #Now we create the variable year, which will help us identify the time period the survey covers. The reason behind is that the already existing variable proddate is not accurate enough and refers to the period the survey is released but not the period considered
 # For our new variable, we will consider the year in which the survey was ongoing, which means round 8 - 2017, round 9 - 2019, round 10 - 2021
+# 
+# full_dataset <- full_dataset %>%
+#   mutate(year = case_when(essround == 8 ~ "2017",
+#                           essround == 9 ~ "2019",
+#                           essround == 10 ~ "2021"))
 
-full_dataset <- full_dataset %>%
-  mutate(year = case_when(essround == 8 ~ "2017",
-                          essround == 9 ~ "2019",
-                          essround == 10 ~ "2021"))
+
+# full_dataset$year <- as.Date(full_dataset$year, "%Y")
+# class(full_dataset$year)
 
 
-full_dataset$year <- as.Date(full_dataset$year, "%Y")
-class(full_dataset$year)
+
+
+###################### METHOD #############################################
+#DON'T FORMAT THE VARIABLES AS FACTORS AND EXCLUDE THE AGE RANGE ADDITION
+# We're looking to employ double LASSO selection
+library(glmnet)
+library(hdm)
+library(haven)
+
+
+# We first have to identify our preliminary dependent and independent variables and their corresponding indexes 
+grep("trstprl", colnames(full_dataset))
+grep("nwspol", colnames(full_dataset))
+
+# We assign them to the variables
+y <- full_dataset[, 37]
+X <- full_dataset[, -c(1:6,9,37)]
+d <- full_dataset[,9]
+
+#To prove the validity of our choice of methodology, we will procedurally employ different regeression methods to show their weaknesses.
+#First, normal OLS regression:
+OLS <- summary(lm(trstprl ~., data = full_dataset))$coefficients[1, ]
+
+#Secondly, Single step selection LASSO and Post-OLS
+lasso <- rlasso(y~., data = X, post = FALSE) # = Run the Rigorous LASSO = #
+selected <- which(coef(lasso)[-c(1:2)] !=0) # = Select relevant variables = #
+formula <- paste(c("y ~ d", names(selected)), collapse = "+")
+SS <- summary(lm(formula, data = X))$coefficients[1, ]
+
+#And finally, double selection
+DS <- rlassoEffects(trstprl~. , I=~nwspol, data=full_dataset)
+DS <-  summary(DS)$coefficients[1,]
+
+results <- rbind(OLS,SS,DS)
+results
+#Here we see that it is through double selection that we have the lowest standard error
+#The other models present extremely small/insignificant coefficient estimates
+
+### FORMAL IMPLEMENTATION ###
+#Therefore, we move on with the formal implementation of the double selection method.
+y <- full_dataset[, 37]
+X <- as.matrix(full_dataset[, -c(1:6,9,37)])
+d <- full_dataset[,9]
+varnames <- colnames(full_dataset)
+
+doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
+selected_vars <- doubleselect$selection.index
+selected_data <- full_dataset[, selected_vars]
+selected_data <- cbind(selected_data, full_dataset$trstprl, full_dataset$nwspol,
+                       full_dataset$proddate)
+
+summary(doubleselect)
+confint(doubleselect)
+print(doubleselect)
+plot(doubleselect)
+
+### FIXED EFFECTS MODEL ###
+#Now we can look to implement the fixed effects model estimation
+library(plm)
+
+#It was found that there are duplicaet IDs between countries
+#This is probably a reporting error stemming from the individual collection of surveys.
+#Therefore, we can generate a new unique ID for each observation
+# selected_data$idno <- sample(nrow(selected_data))
+
+# 'y' is the response variable
+# 'selected_data' is the matrix of selected variables
+panel_data <- pdata.frame(selected_data, index = c("idno"))
+
+# Fit fixed effects model
+FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+
+# Obtain model summary
+summary(FE_model)
+
+######################################################################
+
+
+
+
 
 ### DATA VISUALIZATION #####
 
@@ -427,3 +512,4 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   ggtitle("Evolution of trust from 2016 to 2022") +
   theme_ipsum() +
   ylab("Average trust")
+
