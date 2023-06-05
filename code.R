@@ -513,3 +513,67 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   theme_ipsum() +
   ylab("Average trust")
 
+
+
+
+
+# CONTROL VARIABLES - Download, data cleaning and merging to the full_dataset
+
+
+
+
+
+#step 1: download data from World Bank Open Data website,  while selecting:
+  #Year 2015-2022 (+1980, 1990, 2000, 2010 as reference)
+  #13 countries of interest with their country code
+  #19 variables of interest
+
+#setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
+
+world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
+
+  # I want to set numerical columns at 2 decimals ???
+
+view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
+
+#step 2: rename country code (from 3 -alpha code to 2-alpha code)
+
+unique(full_dataset$cntry)
+unique(world_bank$`Country Code`)
+
+world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
+                                                "CHE" = "CH",
+                                                "CZE" = "CZ",
+                                                "EST" = "EE",
+                                                "FIN" = "FI",
+                                                "FRA" = "FR",
+                                                "HUN" = "HU",
+                                                "ISL" = "IS",
+                                                "ITA" = "IT",
+                                                "LTU" = "LT",
+                                                "NLD" = "NL",
+                                                "NOR" = "NO",
+                                                "PRT" = "PT",
+                                                "SVN" = "SI"))
+unique(world_bank$cntry)
+
+  #delete the previous 3-aplha country code variableù
+
+world_bank <- world_bank %>%
+  select(cntry, everything()) %>%
+  select(-`Country Code`)
+
+world_bank <- world_bank %>% arrange(`Series Code`)
+
+view(world_bank)
+
+#step 3: when ranking by World Bank Indicators, we can see that some of them do not have any value for the whole sample. We can drop these variables
+
+world_bank <- world_bank %>%
+      filter(`Series Code` != "IQ.CPA.TRAN.XQ", 
+             `Series Code` != "SE.XPD.PRIM.PC.ZS",
+             `Series Code` != "SE.XPD.SECO.PC.ZS",
+             `Series Code` != "SE.XPD.TERT.PC.ZS")
+    
+#step 4: add a variable corresponding to the edition year of the survey
+
