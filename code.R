@@ -200,6 +200,562 @@ summary(full_dataset)
 
 
 
+
+
+####################################### CONTROL VARIABLES
+
+
+
+# STEP I: CONTROL VARIABLES - Download, scraping and data cleaning
+
+
+
+# Data Source 1 :WORLD BANK DATABANK CONTROL VARIABLES
+
+
+# Option 1: do the data cleaning with R (didn't use this option, too time-consuming): 
+
+library(readxl)
+
+# download data from World Bank Open Data website to a new data frame, while selecting:
+# Year 2016 - 2021
+# 13 countries of interest with their country code
+# 16 variables of interest
+
+#EDIT YOUR WORKING DIRECTORY
+#setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
+
+world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
+
+view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
+
+#rename country code (from 3 -alpha code to 2-alpha code)
+
+unique(full_dataset$cntry)
+unique(world_bank$`Country Code`)
+
+world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
+                                                "CHE" = "CH",
+                                                "CZE" = "CZ",
+                                                "EST" = "EE",
+                                                "FIN" = "FI",
+                                                "FRA" = "FR",
+                                                "HUN" = "HU",
+                                                "ISL" = "IS",
+                                                "ITA" = "IT",
+                                                "LTU" = "LT",
+                                                "NLD" = "NL",
+                                                "NOR" = "NO",
+                                                "PRT" = "PT",
+                                                "SVN" = "SI"))
+unique(world_bank$cntry)
+
+# delete the previous 3-alpha country code variable
+
+world_bank <- world_bank %>%
+  select(cntry, everything()) %>%
+  select(-`Country Code`, -`Country Name`)
+
+view(world_bank)
+
+
+# do the data cleaning in R to be able to match each variable in the full_dataset
+
+
+
+
+
+
+
+
+
+# Option 2: clean the World Bank data on Excel first, then import each variable in a separate data frame (done):
+
+# Get the list of sheet names from the Excel file
+
+#EDIT TO YOUR WORKING DIRECTORY
+excel_file_world_bank <- "/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
+sheet_names <- excel_sheets(excel_file_world_bank)
+
+# Create an empty list to store the data frames
+data_list <- list()
+
+# Loop through each sheet and read the data into a data frame
+for (sheet_name in sheet_names) {
+  world_bank_indicators <- read_excel(excel_file_world_bank, sheet = sheet_name)
+  data_list[[sheet_name]] <- world_bank_indicators
+}
+
+# Access individual data frames using their sheet names
+
+population <- data_list[["population"]]
+population <- population %>%
+  rename(pop_2017 = "2017", pop_2019 = "2019", pop_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(population)
+
+GDP_per_capita <- data_list[["GDP_per_capita"]]
+GDP_per_capita <- GDP_per_capita %>%
+  rename(GDP_per_capita_2017 = "2017", GDP_per_capita_2019 = "2019", GDP_per_capita_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(GDP_per_capita)
+
+GDP_growth_per_capita <- data_list[["GDP_growth_per_capita"]]
+GDP_growth_per_capita <- GDP_growth_per_capita %>%
+  rename(GDP_growth_per_capita_2017 = "2017", GDP_growth_per_capita_2019 = "2019", GDP_growth_per_capita_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(GDP_growth_per_capita)
+
+inflation <- data_list[["inflation"]]
+inflation <- inflation %>%
+  rename(inflation_2017 = "2017", inflation_2019 = "2019", inflation_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(inflation)
+
+inflation_GDP_deflator <- data_list[["inflation_GDP_deflator"]]
+inflation_GDP_deflator <- inflation_GDP_deflator %>%
+  rename(inflation_GDP_deflator_2017 = "2017", inflation_GDP_deflator_2019 = "2019", inflation_GDP_deflator_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(inflation_GDP_deflator)
+
+revenue <- data_list[["revenue"]]
+revenue <- revenue %>%
+  rename(revenue_2017 = "2017", revenue_2019 = "2019", revenue_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(revenue)
+
+tax_revenue <- data_list[["tax_revenue"]]
+tax_revenue <- tax_revenue %>%
+  rename(tax_revenue_2017 = "2017", tax_revenue_2019 = "2019", tax_revenue_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(tax_revenue)
+
+expense <- data_list[["expense"]]
+expense <- expense %>%
+  rename(expense_2017 = "2017", expense_2019 = "2019", expense_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(expense)
+
+health_expenditure <- data_list[["health_expenditure"]]
+health_expenditure <- health_expenditure %>%
+  rename(health_expenditure_2017 = "2017", health_expenditure_2019 = "2019", health_expenditure_latest = "latest") %>%
+  select(-`Series Code`, -`Series Name`, -`2020`, -`2021`)
+view(health_expenditure)
+
+edu_expenditure <- data_list[["edu_expenditure"]]
+edu_expenditure <- edu_expenditure %>%
+  rename(edu_expenditure_2017 = "2017", edu_expenditure_2019 = "2019", edu_expenditure_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(edu_expenditure)
+
+employment_ratio <- data_list[["employment_ratio"]]
+employment_ratio <- employment_ratio %>%
+  rename(employment_ratio_2017 = "2017", employment_ratio_2019 = "2019", employment_ratio_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(employment_ratio)
+
+labor_force_rate <- data_list[["labor_force_rate"]]
+labor_force_rate <- labor_force_rate %>%
+  rename(labor_force_rate_2017 = "2017", labor_force_rate_2019 = "2019", labor_force_rate_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(labor_force_rate)
+
+unemployment <- data_list[["unemployment"]]
+unemployment <- unemployment %>%
+  rename(unemployment_2017 = "2017", unemployment_2019 = "2019", unemployment_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(unemployment)
+
+poverty_ratio <- data_list[["poverty_ratio"]]
+poverty_ratio <- poverty_ratio %>%
+  rename(poverty_ratio_2017 = "2017", poverty_ratio_2019 = "2019", poverty_ratio_2021 = "latest") %>%
+  select(-`Series Code`, -`Series Name`, -`2018`, -`2020`)
+view(poverty_ratio)
+
+gini_index <- data_list[["gini_index"]]
+gini_index <- gini_index %>%
+  rename(gini_index_2017 = "2017", gini_index_2019 = "2019", gini_index_2021 = "latest") %>%
+  select(-`Series Code`, -`Series Name`, -`2016`, -`2018`, -`2020`)
+view(gini_index)
+
+life_expectancy <- data_list[["life_expectancy"]]
+life_expectancy <- life_expectancy %>%
+  rename(life_expectancy_2017 = "2017", life_expectancy_2019 = "2019", life_expectancy_2021 = "2021") %>%
+  select(-`Series Code`, -`Series Name`)
+view(life_expectancy)
+
+
+# Data Source 2: OTHER CONTROL VARIABLES
+
+
+# REPEAT the importing and cleaning process for other control variables from different data sources
+
+
+# HDI (Human Development Index)
+
+HDI <- read.csv("HDI.csv")
+HDI <- HDI %>%
+  filter(iso3 == "CHE"
+         | iso3 == "CZE"
+         | iso3 == "CZE"
+         | iso3 == "EST"
+         | iso3 == "FIN"
+         | iso3 == "FRA"
+         | iso3 == "HUN"
+         | iso3 == "ISL"
+         | iso3 == "ITA"
+         | iso3 == "LTU"
+         | iso3 == "NLD"
+         | iso3 == "NOR"
+         | iso3 == "PRT"
+         | iso3 == "SVN") %>%
+  select(iso3, country, hdi_2017, hdi_2019, hdi_2021)
+HDI <- HDI %>%
+  mutate(HDI, cntry = recode(iso3,
+                             "CHE" = "CH",
+                             "CZE" = "CZ",
+                             "EST" = "EE",
+                             "FIN" = "FI",
+                             "FRA" = "FR",
+                             "HUN" = "HU",
+                             "ISL" = "IS",
+                             "ITA" = "IT",
+                             "LTU" = "LT",
+                             "NLD" = "NL",
+                             "NOR" = "NO",
+                             "PRT" = "PT",
+                             "SVN" = "SI")) %>%
+  select(cntry, everything()) %>%
+  select(-iso3, -country)
+
+view(HDI)
+
+# Democracy Index
+
+democracy <- read_excel("democracy_index.xlsx")
+democracy <- democracy %>%
+  rename(cntry = "alpha-2")
+
+view(democracy)
+
+# Crime Index
+
+crime <- read_excel("crime_index.xlsx")
+
+view(crime)
+
+# Corruption Index
+
+corruption <- read_excel("corruption_index.xlsx")
+corruption <- corruption %>%
+  mutate(corruption, cntry = recode(ISO3,
+                                    "CHE" = "CH",
+                                    "CZE" = "CZ",
+                                    "EST" = "EE",
+                                    "FIN" = "FI",
+                                    "FRA" = "FR",
+                                    "HUN" = "HU",
+                                    "ISL" = "IS",
+                                    "ITA" = "IT",
+                                    "LTU" = "LT",
+                                    "NLD" = "NL",
+                                    "NOR" = "NO",
+                                    "PRT" = "PT",
+                                    "SVN" = "SI")) %>%
+  select(cntry, `CPI score 2017`, `CPI score 2019`, `CPI score 2021`) %>%
+  rename(corruption_index_2017 = "CPI score 2017", corruption_index_2019 = "CPI score 2019", corruption_index_2021 = "CPI score 2021")
+
+view(corruption)
+
+
+
+
+
+# Data Source 3: COVID PANDEMIC CONTROL VARIABLES
+
+
+
+### [...]
+
+
+
+
+#STEP II: MERGE all the control variables into a new data frame called control_variables
+
+
+
+# Create a new data frame with variables "essround" and "cntry"
+
+control_variables <- read_excel("essround.xlsx")
+view(control_variables)
+
+
+# add variables one by one:
+
+
+#1. WORLD BANK VARIABLES
+
+# population
+
+control_variables <- merge(control_variables, population[, c("cntry", "pop_2017", "pop_2019", "pop_2021")], by = "cntry", all.x = TRUE)
+control_variables$population <- ifelse(control_variables$essround == 8,
+                                       control_variables$pop_2017,
+                                       ifelse(control_variables$essround == 9,
+                                              control_variables$pop_2019,
+                                              control_variables$pop_2021))
+control_variables <- control_variables %>%
+  select(-pop_2017, -pop_2019, -pop_2021)
+
+# GDP_per_capita
+
+control_variables <- merge(control_variables, GDP_per_capita[, c("cntry", "GDP_per_capita_2017", "GDP_per_capita_2019", "GDP_per_capita_2021")], by = "cntry", all.x = TRUE)
+control_variables$GDP_per_capita <- ifelse(control_variables$essround == 8,
+                                           control_variables$GDP_per_capita_2017,
+                                           ifelse(control_variables$essround == 9,
+                                                  control_variables$GDP_per_capita_2019,
+                                                  control_variables$GDP_per_capita_2021))
+control_variables <- control_variables %>%
+  select(-GDP_per_capita_2017, -GDP_per_capita_2019, -GDP_per_capita_2021)
+
+# GDP_growth_per_capita
+
+control_variables <- merge(control_variables, GDP_growth_per_capita[, c("cntry", "GDP_growth_per_capita_2017", "GDP_growth_per_capita_2019", "GDP_growth_per_capita_2021")], by = "cntry", all.x = TRUE)
+control_variables$GDP_growth_per_capita <- ifelse(control_variables$essround == 8,
+                                                  control_variables$GDP_growth_per_capita_2017,
+                                                  ifelse(control_variables$essround == 9,
+                                                         control_variables$GDP_growth_per_capita_2019,
+                                                         control_variables$GDP_growth_per_capita_2021))
+control_variables <- control_variables %>%
+  select(-GDP_growth_per_capita_2017, -GDP_growth_per_capita_2019, -GDP_growth_per_capita_2021)
+
+# inflation
+
+control_variables <- merge(control_variables, inflation[, c("cntry", "inflation_2017", "inflation_2019", "inflation_2021")], by = "cntry", all.x = TRUE)
+control_variables$inflation <- ifelse(control_variables$essround == 8,
+                                      control_variables$inflation_2017,
+                                      ifelse(control_variables$essround == 9,
+                                             control_variables$inflation_2019,
+                                             control_variables$inflation_2021))
+control_variables <- control_variables %>%
+  select(-inflation_2017, -inflation_2019, -inflation_2021)
+
+# inflation_GDP_deflator
+
+control_variables <- merge(control_variables, inflation_GDP_deflator[, c("cntry", "inflation_GDP_deflator_2017", "inflation_GDP_deflator_2019", "inflation_GDP_deflator_2021")], by = "cntry", all.x = TRUE)
+control_variables$inflation_GDP_deflator <- ifelse(control_variables$essround == 8,
+                                                   control_variables$inflation_GDP_deflator_2017,
+                                                   ifelse(control_variables$essround == 9,
+                                                          control_variables$inflation_GDP_deflator_2019,
+                                                          control_variables$inflation_GDP_deflator_2021))
+control_variables <- control_variables %>%
+  select(-inflation_GDP_deflator_2017, -inflation_GDP_deflator_2019, -inflation_GDP_deflator_2021)
+
+# revenue
+
+control_variables <- merge(control_variables, revenue[, c("cntry", "revenue_2017", "revenue_2019", "revenue_2021")], by = "cntry", all.x = TRUE)
+control_variables$revenue <- ifelse(control_variables$essround == 8,
+                                    control_variables$revenue_2017,
+                                    ifelse(control_variables$essround == 9,
+                                           control_variables$revenue_2019,
+                                           control_variables$revenue_2021))
+control_variables <- control_variables %>%
+  select(-revenue_2017, -revenue_2019, -revenue_2021)
+
+# tax_revenue
+
+control_variables <- merge(control_variables, tax_revenue[, c("cntry", "tax_revenue_2017", "tax_revenue_2019", "tax_revenue_2021")], by = "cntry", all.x = TRUE)
+control_variables$tax_revenue <- ifelse(control_variables$essround == 8,
+                                        control_variables$tax_revenue_2017,
+                                        ifelse(control_variables$essround == 9,
+                                               control_variables$tax_revenue_2019,
+                                               control_variables$tax_revenue_2021))
+control_variables <- control_variables %>%
+  select(-tax_revenue_2017, -tax_revenue_2019, -tax_revenue_2021)
+
+# expense
+
+control_variables <- merge(control_variables, expense[, c("cntry", "expense_2017", "expense_2019", "expense_2021")], by = "cntry", all.x = TRUE)
+control_variables$expense <- ifelse(control_variables$essround == 8,
+                                    control_variables$expense_2017,
+                                    ifelse(control_variables$essround == 9,
+                                           control_variables$expense_2019,
+                                           control_variables$expense_2021))
+control_variables <- control_variables %>%
+  select(-expense_2017, -expense_2019, -expense_2021)
+
+# health_expenditure
+
+control_variables <- merge(control_variables, health_expenditure[, c("cntry", "health_expenditure_2017", "health_expenditure_2019", "health_expenditure_latest")], by = "cntry", all.x = TRUE)
+control_variables$health_expenditure <- ifelse(control_variables$essround == 8,
+                                               control_variables$health_expenditure_2017,
+                                               ifelse(control_variables$essround == 9,
+                                                      control_variables$health_expenditure_2019,
+                                                      control_variables$health_expenditure_latest))
+control_variables <- control_variables %>%
+  select(-health_expenditure_2017, -health_expenditure_2019, -health_expenditure_latest)
+
+# edu_expenditure
+
+control_variables <- merge(control_variables, edu_expenditure[, c("cntry", "edu_expenditure_2017", "edu_expenditure_2019", "edu_expenditure_2021")], by = "cntry", all.x = TRUE)
+control_variables$edu_expenditure <- ifelse(control_variables$essround == 8,
+                                            control_variables$edu_expenditure_2017,
+                                            ifelse(control_variables$essround == 9,
+                                                   control_variables$edu_expenditure_2019,
+                                                   control_variables$edu_expenditure_2021))
+control_variables <- control_variables %>%
+  select(-edu_expenditure_2017, -edu_expenditure_2019, -edu_expenditure_2021)
+
+# employment_ratio
+
+control_variables <- merge(control_variables, employment_ratio[, c("cntry", "employment_ratio_2017", "employment_ratio_2019", "employment_ratio_2021")], by = "cntry", all.x = TRUE)
+control_variables$employment_ratio <- ifelse(control_variables$essround == 8,
+                                             control_variables$employment_ratio_2017,
+                                             ifelse(control_variables$essround == 9,
+                                                    control_variables$employment_ratio_2019,
+                                                    control_variables$employment_ratio_2021))
+control_variables <- control_variables %>%
+  select(-employment_ratio_2017, -employment_ratio_2019, -employment_ratio_2021)
+
+# labor_force_rate
+
+control_variables <- merge(control_variables, labor_force_rate[, c("cntry", "labor_force_rate_2017", "labor_force_rate_2019", "labor_force_rate_2021")], by = "cntry", all.x = TRUE)
+control_variables$labor_force_rate <- ifelse(control_variables$essround == 8,
+                                             control_variables$labor_force_rate_2017,
+                                             ifelse(control_variables$essround == 9,
+                                                    control_variables$labor_force_rate_2019,
+                                                    control_variables$labor_force_rate_2021))
+control_variables <- control_variables %>%
+  select(-labor_force_rate_2017, -labor_force_rate_2019, -labor_force_rate_2021)
+
+# unemployment
+
+control_variables <- merge(control_variables, unemployment[, c("cntry", "unemployment_2017", "unemployment_2019", "unemployment_2021")], by = "cntry", all.x = TRUE)
+control_variables$unemployment <- ifelse(control_variables$essround == 8,
+                                         control_variables$unemployment_2017,
+                                         ifelse(control_variables$essround == 9,
+                                                control_variables$unemployment_2019,
+                                                control_variables$unemployment_2021))
+control_variables <- control_variables %>%
+  select(-unemployment_2017, -unemployment_2019, -unemployment_2021)
+
+# poverty_ratio
+
+control_variables <- merge(control_variables, poverty_ratio[, c("cntry", "poverty_ratio_2017", "poverty_ratio_2019", "poverty_ratio_2021")], by = "cntry", all.x = TRUE)
+control_variables$poverty_ratio <- ifelse(control_variables$essround == 8,
+                                          control_variables$poverty_ratio_2017,
+                                          ifelse(control_variables$essround == 9,
+                                                 control_variables$poverty_ratio_2019,
+                                                 control_variables$poverty_ratio_2021))
+control_variables <- control_variables %>%
+  select(-poverty_ratio_2017, -poverty_ratio_2019, -poverty_ratio_2021)
+
+# gini_index
+
+control_variables <- merge(control_variables, gini_index[, c("cntry", "gini_index_2017", "gini_index_2019", "gini_index_2021")], by = "cntry", all.x = TRUE)
+control_variables$gini_index <- ifelse(control_variables$essround == 8,
+                                       control_variables$gini_index_2017,
+                                       ifelse(control_variables$essround == 9,
+                                              control_variables$gini_index_2019,
+                                              control_variables$gini_index_2021))
+control_variables <- control_variables %>%
+  select(-gini_index_2017, -gini_index_2019, -gini_index_2021)
+
+# life_expectancy
+
+control_variables <- merge(control_variables, life_expectancy[, c("cntry", "life_expectancy_2017", "life_expectancy_2019", "life_expectancy_2021")], by = "cntry", all.x = TRUE)
+control_variables$life_expectancy <- ifelse(control_variables$essround == 8,
+                                            control_variables$life_expectancy_2017,
+                                            ifelse(control_variables$essround == 9,
+                                                   control_variables$life_expectancy_2019,
+                                                   control_variables$life_expectancy_2021))
+control_variables <- control_variables %>%
+  select(-life_expectancy_2017, -life_expectancy_2019, -life_expectancy_2021)
+
+
+
+#2. OTHER VARIABLES
+
+# HDI (Human Development Index)
+
+control_variables <- merge(control_variables, HDI[, c("cntry", "hdi_2017", "hdi_2019", "hdi_2021")], by = "cntry", all.x = TRUE)
+control_variables$hdi_index <- ifelse(control_variables$essround == 8,
+                                      control_variables$hdi_2017,
+                                      ifelse(control_variables$essround == 9,
+                                             control_variables$hdi_2019,
+                                             control_variables$hdi_2021))
+control_variables <- control_variables %>%
+  select(-hdi_2017, -hdi_2019, -hdi_2021)
+
+# Corruption Index
+
+control_variables <- merge(control_variables, corruption[, c("cntry", "corruption_index_2017", "corruption_index_2019", "corruption_index_2021")], by = "cntry", all.x = TRUE)
+control_variables$corruption_index <- ifelse(control_variables$essround == 8,
+                                             control_variables$corruption_index_2017,
+                                             ifelse(control_variables$essround == 9,
+                                                    control_variables$corruption_index_2019,
+                                                    control_variables$corruption_index_2021))
+control_variables <- control_variables %>%
+  select(-corruption_index_2017, -corruption_index_2019, -corruption_index_2021)
+
+# Crime Index
+
+control_variables <- merge(control_variables, crime[, c("cntry", "crime_index_2017", "crime_index_2019", "crime_index_2021")], by = "cntry", all.x = TRUE)
+control_variables$crime_index <- ifelse(control_variables$essround == 8,
+                                        control_variables$crime_index_2017,
+                                        ifelse(control_variables$essround == 9,
+                                               control_variables$crime_index_2019,
+                                               control_variables$crime_index_2021))
+control_variables <- control_variables %>%
+  select(-crime_index_2017, -crime_index_2019, -crime_index_2021)
+
+# Democracy Index
+
+control_variables <- merge(control_variables, democracy[, c("cntry", "democracy_index_2017", "democracy_index_2019", "democracy_index_2021")], by = "cntry", all.x = TRUE)
+control_variables$democracy_index <- ifelse(control_variables$essround == 8,
+                                            control_variables$democracy_index_2017,
+                                            ifelse(control_variables$essround == 9,
+                                                   control_variables$democracy_index_2019,
+                                                   control_variables$democracy_index_2021))
+control_variables <- control_variables %>%
+  select(-democracy_index_2017, -democracy_index_2019, -democracy_index_2021)
+
+
+
+
+#3. COVID VARIABLES
+
+
+
+### [...]
+
+
+
+view(control_variables)
+
+
+
+
+#STEP III: MERGE the control_variables data frame with the original full_dataset
+
+full_dataset <- full_dataset %>%
+  left_join(control_variables, by = c("cntry", "essround"))
+
+# reorder variables to have control variables in the first columns
+
+full_dataset <- full_dataset %>%
+  select(name, essround, edition, proddate, idno, cntry, population, GDP_per_capita, GDP_growth_per_capita, everything())
+
+
+
+
+# I want to set some of the numerical columns at 3 decimals ???
+
+
+
+#######################################
+
+
+
 ###################### METHOD #############################################
 #DON'T FORMAT THE VARIABLES AS FACTORS AND EXCLUDE THE AGE RANGE ADDITION
 # We're looking to employ double LASSO selection
@@ -515,65 +1071,4 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
 
 
 
-
-
-# CONTROL VARIABLES - Download, data cleaning and merging to the full_dataset
-
-
-
-
-
-#step 1: download data from World Bank Open Data website,  while selecting:
-  #Year 2015-2022 (+1980, 1990, 2000, 2010 as reference)
-  #13 countries of interest with their country code
-  #19 variables of interest
-
-#setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
-
-world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
-
-  # I want to set numerical columns at 2 decimals ???
-
-view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
-
-#step 2: rename country code (from 3 -alpha code to 2-alpha code)
-
-unique(full_dataset$cntry)
-unique(world_bank$`Country Code`)
-
-world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
-                                                "CHE" = "CH",
-                                                "CZE" = "CZ",
-                                                "EST" = "EE",
-                                                "FIN" = "FI",
-                                                "FRA" = "FR",
-                                                "HUN" = "HU",
-                                                "ISL" = "IS",
-                                                "ITA" = "IT",
-                                                "LTU" = "LT",
-                                                "NLD" = "NL",
-                                                "NOR" = "NO",
-                                                "PRT" = "PT",
-                                                "SVN" = "SI"))
-unique(world_bank$cntry)
-
-  #delete the previous 3-aplha country code variableù
-
-world_bank <- world_bank %>%
-  select(cntry, everything()) %>%
-  select(-`Country Code`)
-
-world_bank <- world_bank %>% arrange(`Series Code`)
-
-view(world_bank)
-
-#step 3: when ranking by World Bank Indicators, we can see that some of them do not have any value for the whole sample. We can drop these variables
-
-world_bank <- world_bank %>%
-      filter(`Series Code` != "IQ.CPA.TRAN.XQ", 
-             `Series Code` != "SE.XPD.PRIM.PC.ZS",
-             `Series Code` != "SE.XPD.SECO.PC.ZS",
-             `Series Code` != "SE.XPD.TERT.PC.ZS")
-    
-#step 4: add a variable corresponding to the edition year of the survey
 
