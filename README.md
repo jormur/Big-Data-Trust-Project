@@ -4,6 +4,6 @@
 - [x] Clean the data
 - [ ] Merge Data Sources
 - [X] LASSO selection
-- [ ] Fixed effects estimation
+- [X] Fixed effects estimation
 - [ ] Data Visualization
 - [ ] Hypothesis Testing
