@@ -149,7 +149,7 @@ full_dataset$trstprl<-as.numeric(full_dataset$trstprl)
 full_dataset$trstprt<-as.numeric(full_dataset$trstprt)
 full_dataset$trstun<-as.numeric(full_dataset$trstun)
 
-full_dataset$cntry <- as.factor(full_dataset$cntry)
+# full_dataset$cntry <- as.factor(full_dataset$cntry)
 
 summary(full_dataset)
 
