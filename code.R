@@ -745,10 +745,11 @@ full_dataset <- full_dataset %>%
 full_dataset <- full_dataset %>%
   select(name, essround, edition, proddate, idno, cntry, population, GDP_per_capita, GDP_growth_per_capita, everything())
 
+view(full_dataset)
 
 
 
-# I want to set some of the numerical columns at 3 decimals ???
+      # I want to set some of the numerical columns at 3 decimals ???
 
 
 
