@@ -490,7 +490,7 @@ control_variables <- read_excel("essround.xlsx")
 view(control_variables)
 
 
-# add variables one by one:
+# add variables one by one, while assigning separate values for round 8, 9 and 10:
 
 
 #1. WORLD BANK VARIABLES
