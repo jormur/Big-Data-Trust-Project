@@ -749,7 +749,7 @@ view(full_dataset)
 
 
 
-      # I want to set some of the numerical columns at 3 decimals ???
+# I want to set some of the numerical columns at 3 decimals ???
 
 
 
@@ -892,8 +892,8 @@ ggplot() +
   scale_size_continuous(range=c(4, 18)) +
   geom_text (data = map_df, label = countrynames, aes(x=long, y=lat), hjust=0.5, vjust=-2.7, size=3) +
   theme_minimal() +
-  theme(legend.position = 'none', panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text = element_blank(), axis.title = element_blank())
-
+  theme(legend.position = 'none', panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text = element_blank(), axis.title = element_blank()) +
+  ggtitle("Observations distribution, by country") + ggeasy::easy_center_title()
 
 # At this point we also want to visualize the real population of each country and compare it with our observations. This will help us to understand if our sample is balanced 
 # Population is displayed in millions and refers to 2021
@@ -909,7 +909,8 @@ ggplot() +
   scale_size_continuous(range=c(4, 18)) +
   geom_text (data = map_df, label = countrynames, aes(x=long, y=lat), hjust=0.5, vjust=-2.7, size=3) +
   theme_minimal() +
-  theme(legend.position = 'none', panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text = element_blank(), axis.title = element_blank())
+  theme(legend.position = 'none', panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text = element_blank(), axis.title = element_blank()) +
+  ggtitle("Population distribution, by country") + ggeasy::easy_center_title() 
 
 #Gender distribution overall - pie chart
 gender_ov_count <- table(full_dataset$gndr)
@@ -922,9 +923,30 @@ pie(gender_ov_count, labels = new_labels, main = 'Distribution of gender overall
 
 #Age distribution overall - bar plot
 
+#For this plot, we will create another variables to show 3 age ranges and compare it with the distribution of population age in EU from 2011 to 2021
+
+full_dataset <- full_dataset %>%
+  mutate(agerange = case_when(agea >= 65 ~ "65+ years",
+                              agea < 65 & agea >= 15 ~ "15-64 years",
+                              TRUE ~ "0-14 years"))
+
+# We want R to recognize the new variable agerange as factor. We will directly write over the variable.
+# The reason behind is that is easier to work with factor variables rather than character variables
+# Moreover, for some of these variables the order of the different levels actually matters to us.
+full_dataset$agerange <- as.factor(full_dataset$agerange)
+# We make sure that the variable is now recognized as factor, using the class() function
+class(full_dataset$agerange)
+# Now, what we have to do is to display the levels and eventually set the order we want them to be
+levels(full_dataset$agerange)
+# As we can see, the levels are not in the right order. To change them, we rewrite over the variables and set the order manually
+full_dataset$agerange <- factor((full_dataset$agerange), levels = c("0-14 years", "15-64 years","65+ years"))
+
+# We check that everything is good
+levels(full_dataset$agerange)
+
 age_range_overall_count <- table(full_dataset$agerange)
 barplot(age_range_overall_count, beside = T, main = 'Distribution of age', xlab = 'Age Range', 
-        ylab = 'Count', ylim = c(0,2000), col=c("#87CEFA", "#00BFFF", "#56B4E9", "#1C86EE", "#1874CD", "#104E8B","#00008B"), border = "white")
+        ylab = 'Count', ylim = c(0,7000), col=c("#87CEFA", "#104E8B", "#56B4E9"), border = "white")
 
 
 #Age distribution overall - pie chart
@@ -934,10 +956,10 @@ df_age_range <- as.data.frame(prop_age_range)
 View(df_age_range)
 
 lbs <- round(prop_age_range/sum(prop_age_range)*100, digits = 1)
-lbs <- c(paste("<18", "-", lbs[1], "%"), paste("18-20", "-", lbs[2], "%"), paste("30-39", "-", lbs[3], "%"), paste("40-49", "-", lbs[4], "%"), paste("50-59", "-", lbs[5], "%"), paste("60-69", "-", lbs[6], "%"), paste(">=70", "-", lbs[7], "%"))
-lbs
+lbs <- c(paste("0-14 years", "-", lbs[1], "%"), paste("15-64 years", "-", lbs[2], "%"), paste("65+ years", "-", lbs[3], "%"))
+
 pie(prop_age_range, labels = lbs, main ='Distribution of age overall',
-    col=c("#87CEFA", "#00BFFF", "#56B4E9", "#1C86EE", "#1874CD", "#104E8B","#00008B"), border = "white")   ######### TO IMPROVE ########
+    col=c("#87CEFA", "#104E8B", "#56B4E9"), border = "white")  
 
 
 #Average level trust - circular bar plot
@@ -1034,7 +1056,7 @@ ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +
   coord_polar() + 
   geom_text(data=label_data, aes(x=id, y=level_trst +1, label = trust_for, hjust=hjust), color="black",alpha=0.7, size=3, angle= label_data$angle, inherit.aes = FALSE ) +
   
-  geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+  geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.4 , inherit.aes = FALSE )  +
   geom_text(data=base_data, aes(x = title, y = -8, label=cntry), hjust=c(rep(0.4,14)), colour = "black", alpha=1, size=5, inherit.aes = FALSE)
 
 
@@ -1047,15 +1069,25 @@ ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +
 library(viridis)
 library(hrbrthemes)
 
+#we create the variable year, which will help us identify the time period the survey covers. The reason behind is that the already existing variable proddate is not accurate enough and refers to the period the survey is released but not the period considered
+# For our new variable, we will consider the year in which the survey was ongoing, which means round 8 - 2017, round 9 - 2019, round 10 - 2021
+
+full_dataset <- full_dataset %>%
+  mutate(year = case_when(essround == 8 ~ "2017",
+                          essround == 9 ~ "2019",
+                          essround == 10 ~ "2021"))
+
+full_dataset$year <- as.factor(full_dataset$year)
+
 trust_df <- full_dataset %>%
   select(cntry, year, trstep, trstlgl, trstplc, trstplt, trstprl, trstprt, trstun) %>%
   group_by(year) %>%
-  summarize(EU = mean(trstep), legal_system = mean(trstlgl), politicians = mean(trstplt), parliament = mean(trstprt), party = mean(trstprt), united_nations = mean(trstun))
+  summarize(EU = mean(trstep), legal_system = mean(trstlgl), police = mean(trstplc), politicians = mean(trstplt), parliament = mean(trstprl), political_parties = mean(trstprt), united_nations = mean(trstun))
 
 
 View(trust_df)
 trust_df <- trust_df %>%
-  gather("trust_for", "level_trst", 2:7)
+  gather("trust_for", "level_trst", 2:8)
 View(trust_df)
 
 trust_df$level_trst <- as.numeric(trust_df$level_trst)
@@ -1064,12 +1096,7 @@ label_data$trust_for <- as.factor(label_data$trust_for)
 View(trust_df)
 
 ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color = trust_for)) +
-  geom_line() +
-  scale_color_viridis(discrete = TRUE) +
-  ggtitle("Evolution of trust from 2016 to 2022") +
+  geom_line() + geom_point() +
+  ggtitle("Evolution of trust from 2017 to 2021") +
   theme_ipsum() +
   ylab("Average trust")
-
-
-
-
