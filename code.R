@@ -740,7 +740,7 @@ view(control_variables)
 full_dataset <- full_dataset %>%
   left_join(control_variables, by = c("cntry", "essround"))
 
-# reorder variables to have control variables in the first columns
+# reorder variables to have basic variables population, GDP_per_capita and GDP_growth_per_capita in the first columns (the other control variables are the last columns)
 
 full_dataset <- full_dataset %>%
   select(name, essround, edition, proddate, idno, cntry, population, GDP_per_capita, GDP_growth_per_capita, everything())
