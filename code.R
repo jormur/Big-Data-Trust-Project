@@ -530,6 +530,7 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
 
 #setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
 
+library(readxl)
 world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
 
   # I want to set numerical columns at 2 decimals ???
