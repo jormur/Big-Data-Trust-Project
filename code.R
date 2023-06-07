@@ -225,7 +225,7 @@ library(readxl)
 #EDIT YOUR WORKING DIRECTORY
 #setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
 
-world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
+world_bank <- read_excel("Data/P_Data_Extract_From_World_Development_Indicators.xlsx")
 
 view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
 
@@ -275,6 +275,7 @@ view(world_bank)
 
 #EDIT TO YOUR WORKING DIRECTORY
 excel_file_world_bank <- "/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
+excel_file_world_bank <- "Data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
 sheet_names <- excel_sheets(excel_file_world_bank)
 
 # Create an empty list to store the data frames
@@ -393,7 +394,7 @@ view(life_expectancy)
 
 # HDI (Human Development Index)
 
-HDI <- read.csv("HDI.csv")
+HDI <- read.csv("Data/HDI.csv")
 HDI <- HDI %>%
   filter(iso3 == "CHE"
          | iso3 == "CZE"
@@ -432,7 +433,7 @@ view(HDI)
 
 # Democracy Index
 
-democracy <- read_excel("democracy_index.xlsx")
+democracy <- read_excel("Data/democracy_index.xlsx")
 democracy <- democracy %>%
   rename(cntry = "alpha-2")
 
@@ -440,13 +441,13 @@ view(democracy)
 
 # Crime Index
 
-crime <- read_excel("crime_index.xlsx")
+crime <- read_excel("Data/crime_index.xlsx")
 
 view(crime)
 
 # Corruption Index
 
-corruption <- read_excel("corruption_index.xlsx")
+corruption <- read_excel("Data/corruption_index.xlsx")
 corruption <- corruption %>%
   mutate(corruption, cntry = recode(ISO3,
                                     "CHE" = "CH",
@@ -486,7 +487,7 @@ view(corruption)
 
 # Create a new data frame with variables "essround" and "cntry"
 
-control_variables <- read_excel("essround.xlsx")
+control_variables <- read_excel("Data/essround.xlsx")
 view(control_variables)
 
 
@@ -770,9 +771,9 @@ grep("trstprl", colnames(full_dataset))
 grep("nwspol", colnames(full_dataset))
 
 # We assign them to the variables
-y <- full_dataset[, 37]
-X <- full_dataset[, -c(1:6,9,37)]
-d <- full_dataset[,9]
+y <- full_dataset[, 40]
+X <- full_dataset[, -c(1:6,12,40)]
+d <- full_dataset[,12]
 
 #To prove the validity of our choice of methodology, we will procedurally employ different regeression methods to show their weaknesses.
 #First, normal OLS regression:
@@ -795,16 +796,16 @@ results
 
 ### FORMAL IMPLEMENTATION ###
 #Therefore, we move on with the formal implementation of the double selection method.
-y <- full_dataset[, 37]
-X <- as.matrix(full_dataset[, -c(1:6,9,37)])
-d <- full_dataset[,9]
+y <- full_dataset[, 40]
+X <- as.matrix(full_dataset[, -c(1:6,12,40)])
+d <- full_dataset[, 12]
 varnames <- colnames(full_dataset)
 
 doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
 selected_vars <- doubleselect$selection.index
 selected_data <- full_dataset[, selected_vars]
-selected_data <- cbind(selected_data, full_dataset$trstprl, full_dataset$nwspol,
-                       full_dataset$proddate)
+selected_data <- cbind(full_dataset$idno, full_dataset$cntry, full_dataset$trstprl, full_dataset$nwspol,
+                       full_dataset$proddate, selected_data)
 
 summary(doubleselect)
 confint(doubleselect)
@@ -822,7 +823,7 @@ library(plm)
 
 # 'y' is the response variable
 # 'selected_data' is the matrix of selected variables
-panel_data <- pdata.frame(selected_data, index = c("idno"))
+panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
 
 # Fit fixed effects model
 FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
@@ -1099,7 +1100,7 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   geom_line() + geom_point() +
   ggtitle("Evolution of trust from 2017 to 2021") +
   theme_ipsum() +
-<<<<<<< HEAD
+# <<<<<<< HEAD
   ylab("Average trust")
 
 
@@ -1119,7 +1120,6 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
 
 #setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
 
-library(readxl)
 world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
 
   # I want to set numerical columns at 2 decimals ???
@@ -1168,5 +1168,5 @@ world_bank <- world_bank %>%
 #step 4: add a variable corresponding to the edition year of the survey
 
 =======
-  ylab("Average trust")
->>>>>>> ca39b4f173383f153e4835a2d5f76eb4794323dd
+# ylab("Average trust")
+# >>>>>>> ca39b4f173383f153e4835a2d5f76eb4794323dd
