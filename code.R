@@ -1,22 +1,29 @@
 #load packages
 library(data.table)
 library(dplyr)
-library(tidyverse)
 library(ggplot2)
 library(ggeasy)
-library(plotly)
+library(glmnet)
+library(haven)
+library(hdm)
+library(hrbrthemes)
 library(leaflet)
-library(tidyverse)
 library(magrittr)
-library(ggplot2)
 library(maps)
 library(mapproj)
+library(plm)
+library(plotly)
+library(readxl)
+library(tidyverse)
+library(viridis)
+
+
 
 ### IMPORTING DATA TO R ########
 options(warn = -1)
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
+#SET YOUR WORKING DIRECTORY
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 #setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
 
 full_dataset <- read.csv("ESS-Data-Wizard.csv")
@@ -213,59 +220,8 @@ summary(full_dataset)
 # Data Source 1 :WORLD BANK DATABANK CONTROL VARIABLES
 
 
-# Option 1: do the data cleaning with R (didn't use this option, too time-consuming): 
-
-library(readxl)
-
-# download data from World Bank Open Data website to a new data frame, while selecting:
-# Year 2016 - 2021
-# 13 countries of interest with their country code
-# 16 variables of interest
-
-#EDIT YOUR WORKING DIRECTORY
-#setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
-
-world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
-
-view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
-
-#rename country code (from 3 -alpha code to 2-alpha code)
-
-unique(full_dataset$cntry)
-unique(world_bank$`Country Code`)
-
-world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
-                                                "CHE" = "CH",
-                                                "CZE" = "CZ",
-                                                "EST" = "EE",
-                                                "FIN" = "FI",
-                                                "FRA" = "FR",
-                                                "HUN" = "HU",
-                                                "ISL" = "IS",
-                                                "ITA" = "IT",
-                                                "LTU" = "LT",
-                                                "NLD" = "NL",
-                                                "NOR" = "NO",
-                                                "PRT" = "PT",
-                                                "SVN" = "SI"))
-unique(world_bank$cntry)
-
-# delete the previous 3-alpha country code variable
-
-world_bank <- world_bank %>%
-  select(cntry, everything()) %>%
-  select(-`Country Code`, -`Country Name`)
-
-view(world_bank)
-
-
-# do the data cleaning in R to be able to match each variable in the full_dataset
-
-
-
-
-
-
+# Option 1: see at the end of the code:
+  #do the data cleaning with R (didn't use this option, too time-consuming): 
 
 
 
@@ -393,6 +349,7 @@ view(life_expectancy)
 
 # HDI (Human Development Index)
 
+#EDIT TO YOUR WORKING DIRECTORY
 HDI <- read.csv("HDI.csv")
 HDI <- HDI %>%
   filter(iso3 == "CHE"
@@ -466,6 +423,7 @@ corruption <- corruption %>%
   rename(corruption_index_2017 = "CPI score 2017", corruption_index_2019 = "CPI score 2019", corruption_index_2021 = "CPI score 2021")
 
 view(corruption)
+
 
 
 
@@ -760,10 +718,6 @@ view(full_dataset)
 ###################### METHOD #############################################
 #DON'T FORMAT THE VARIABLES AS FACTORS AND EXCLUDE THE AGE RANGE ADDITION
 # We're looking to employ double LASSO selection
-library(glmnet)
-library(hdm)
-library(haven)
-
 
 # We first have to identify our preliminary dependent and independent variables and their corresponding indexes 
 grep("trstprl", colnames(full_dataset))
@@ -813,12 +767,11 @@ plot(doubleselect)
 
 ### FIXED EFFECTS MODEL ###
 #Now we can look to implement the fixed effects model estimation
-library(plm)
 
-#It was found that there are duplicaet IDs between countries
+#It was found that there are duplicate IDs between countries
 #This is probably a reporting error stemming from the individual collection of surveys.
 #Therefore, we can generate a new unique ID for each observation
-# selected_data$idno <- sample(nrow(selected_data))
+selected_data$idno <- sample(nrow(selected_data))
 
 # 'y' is the response variable
 # 'selected_data' is the matrix of selected variables
@@ -975,7 +928,7 @@ trust_df <- full_dataset %>%
 
 trust_df <- trust_df %>%
   gather("trust_for", "level_trst", 2:7)
-
+label_data <- trust_df
 trust_df$level_trst <- as.numeric(trust_df$level_trst)
 label_data$trust_for <- as.factor(label_data$trust_for)
 
@@ -1066,8 +1019,6 @@ ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +
 
 # We prepare our dataframe
 
-library(viridis)
-library(hrbrthemes)
 
 #we create the variable year, which will help us identify the time period the survey covers. The reason behind is that the already existing variable proddate is not accurate enough and refers to the period the survey is released but not the period considered
 # For our new variable, we will consider the year in which the survey was ongoing, which means round 8 - 2017, round 9 - 2019, round 10 - 2021
@@ -1103,69 +1054,75 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   ylab("Average trust")
 
 
+  
+  
+  
 
-
-
-# CONTROL VARIABLES - Download, data cleaning and merging to the full_dataset
-
-
-
-
-
-#step 1: download data from World Bank Open Data website,  while selecting:
-  #Year 2015-2022 (+1980, 1990, 2000, 2010 as reference)
-  #13 countries of interest with their country code
-  #19 variables of interest
-
-#setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
-
-library(readxl)
-world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
-
-  # I want to set numerical columns at 2 decimals ???
-
-view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
-
-#step 2: rename country code (from 3 -alpha code to 2-alpha code)
-
-unique(full_dataset$cntry)
-unique(world_bank$`Country Code`)
-
-world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
-                                                "CHE" = "CH",
-                                                "CZE" = "CZ",
-                                                "EST" = "EE",
-                                                "FIN" = "FI",
-                                                "FRA" = "FR",
-                                                "HUN" = "HU",
-                                                "ISL" = "IS",
-                                                "ITA" = "IT",
-                                                "LTU" = "LT",
-                                                "NLD" = "NL",
-                                                "NOR" = "NO",
-                                                "PRT" = "PT",
-                                                "SVN" = "SI"))
-unique(world_bank$cntry)
-
-  #delete the previous 3-aplha country code variableù
-
-world_bank <- world_bank %>%
-  select(cntry, everything()) %>%
-  select(-`Country Code`)
-
-world_bank <- world_bank %>% arrange(`Series Code`)
-
-view(world_bank)
-
-#step 3: when ranking by World Bank Indicators, we can see that some of them do not have any value for the whole sample. We can drop these variables
-
-world_bank <- world_bank %>%
-      filter(`Series Code` != "IQ.CPA.TRAN.XQ", 
-             `Series Code` != "SE.XPD.PRIM.PC.ZS",
-             `Series Code` != "SE.XPD.SECO.PC.ZS",
-             `Series Code` != "SE.XPD.TERT.PC.ZS")
+  
+  
+  
+  
+  
+############################### CONTROL VARIABLES
+  
+  
+  # Option 1: see at the end of the code:
+  #do the data cleaning with R (didn't use this option, too time-consuming): 
+  
+  # download data from World Bank Open Data website to a new data frame, while selecting:
+  # Year 2016 - 2021
+  # 13 countries of interest with their country code
+  # 16 variables of interest
+  
+  #EDIT YOUR WORKING DIRECTORY
+  #setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
+  
+  world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
+  
+  view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
+  
+  #rename country code (from 3 -alpha code to 2-alpha code)
+  
+  unique(full_dataset$cntry)
+  unique(world_bank$`Country Code`)
+  
+  world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
+                                                  "CHE" = "CH",
+                                                  "CZE" = "CZ",
+                                                  "EST" = "EE",
+                                                  "FIN" = "FI",
+                                                  "FRA" = "FR",
+                                                  "HUN" = "HU",
+                                                  "ISL" = "IS",
+                                                  "ITA" = "IT",
+                                                  "LTU" = "LT",
+                                                  "NLD" = "NL",
+                                                  "NOR" = "NO",
+                                                  "PRT" = "PT",
+                                                  "SVN" = "SI"))
+  unique(world_bank$cntry)
+  
+  # delete the previous 3-alpha country code variable
+  
+  world_bank <- world_bank %>%
+    select(cntry, everything()) %>%
+    select(-`Country Code`, -`Country Name`)
+  
+  view(world_bank)
+  
+  #step 3: when ranking by World Bank Indicators, we can see that some of them do not have any value for the whole sample. We can drop these variables
+  
+  world_bank <- world_bank %>%
+    filter(`Series Code` != "IQ.CPA.TRAN.XQ", 
+           `Series Code` != "SE.XPD.PRIM.PC.ZS",
+           `Series Code` != "SE.XPD.SECO.PC.ZS",
+           `Series Code` != "SE.XPD.TERT.PC.ZS")
+  
+  
+  #step 4: do the data cleaning in R to be able to match each variable in the full_dataset
+  
     
-#step 4: add a variable corresponding to the edition year of the survey
+
 
 =======
   ylab("Average trust")
