@@ -771,7 +771,7 @@ plot(doubleselect)
 #It was found that there are duplicate IDs between countries
 #This is probably a reporting error stemming from the individual collection of surveys.
 #Therefore, we can generate a new unique ID for each observation
-selected_data$idno <- sample(nrow(selected_data))
+# selected_data$idno <- sample(nrow(selected_data))
 
 # 'y' is the response variable
 # 'selected_data' is the matrix of selected variables
