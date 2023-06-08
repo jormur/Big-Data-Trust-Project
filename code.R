@@ -18,13 +18,12 @@ library(tidyverse)
 library(viridis)
 
 
-
 ### IMPORTING DATA TO R ########
 options(warn = -1)
 
 #SET YOUR WORKING DIRECTORY
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-#setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
+setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
 
 full_dataset <- read.csv("ESS-Data-Wizard.csv")
 
@@ -256,6 +255,7 @@ world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
                                                 "NOR" = "NO",
                                                 "PRT" = "PT",
                                                 "SVN" = "SI"))
+
 unique(world_bank$cntry)
 
 # delete the previous 3-alpha country code variable
@@ -794,6 +794,7 @@ d <- full_dataset[,12]
 OLS <- summary(lm(trstprl ~., data = full_dataset))$coefficients[1, ]
 
 #Secondly, Single step selection LASSO and Post-OLS
+
 lasso <- rlasso(y~., data = X, post = FALSE) # = Run the Rigorous LASSO = #
 selected <- which(coef(lasso)[-c(1:2)] !=0) # = Select relevant variables = #
 formula <- paste(c("y ~ d", names(selected)), collapse = "+")
@@ -910,16 +911,16 @@ ggplot() +
   ggtitle("Observations distribution, by country") + ggeasy::easy_center_title()
 
 # At this point we also want to visualize the real population of each country and compare it with our observations. This will help us to understand if our sample is balanced 
-# Population is displayed in millions and refers to 2021
+# Population is displayed in millions and refers to the population of 2021
 
-population <- c(8.703,10.51,1.331,5.541,67.75,9.71,0.372520,59.11,2.801,17.53,5.408,10.33,2.108)
+pop_2021 <- population$pop_2021
 
 map_df <- map_df %>%
-  mutate(population = population)
+  mutate(population = pop_2021)
 
 ggplot() +
   geom_polygon(data = world_map, aes(x=long, y = lat, group = group), fill="#87CEFA", alpha=0.7) +
-  geom_point( data = map_df, aes(x=longitude, y=latitude, size=population,),  color="mediumblue",  alpha=0.6) +
+  geom_point( data = map_df, aes(x=longitude, y=latitude, size=pop_2021,),  color="mediumblue",  alpha=0.6) +
   scale_size_continuous(range=c(4, 18)) +
   geom_text (data = map_df, label = countrynames, aes(x=long, y=lat), hjust=0.5, vjust=-2.7, size=3) +
   theme_minimal() +
@@ -958,9 +959,9 @@ full_dataset$agerange <- factor((full_dataset$agerange), levels = c("0-14 years"
 # We check that everything is good
 levels(full_dataset$agerange)
 
-age_range_overall_count <- table(full_dataset$agerange)
-barplot(age_range_overall_count, beside = T, main = 'Distribution of age', xlab = 'Age Range', 
-        ylab = 'Count', ylim = c(0,7000), col=c("#87CEFA", "#104E8B", "#56B4E9"), border = "white")
+#age_range_overall_count <- table(full_dataset$agerange)
+#barplot(age_range_overall_count, beside = T, main = 'Distribution of age', xlab = 'Age Range', 
+#        ylab = 'Count', ylim = c(0,7000), col=c("#87CEFA", "#104E8B", "#56B4E9"), border = "white")
 
 
 #Age distribution overall - pie chart
@@ -983,12 +984,16 @@ pie(prop_age_range, labels = lbs, main ='Distribution of age overall',
 trust_df <- full_dataset %>%
   select(cntry, trstep, trstlgl, trstplc, trstplt, trstprl, trstprt, trstun) %>%
   group_by(cntry) %>%
-  summarize(EU = mean(trstep), legal_system = mean(trstlgl), politicians = mean(trstplt), parliament = mean(trstprt), party = mean(trstprt), united_nations = mean(trstun))
+  summarize(EU = mean(trstep), legal_system = mean(trstlgl), police = mean(trstplc), politicians = mean(trstplt), parliament = mean(trstprl), political_parties = mean(trstprt), united_nations = mean(trstun))
 
+# For this plot, we will change the variable cntry in a factor
+trust_df$cntry <- as.factor(trust_df$cntry)
+
+View(trust_df)
 # Now we have to reshape the dataframe
 
 trust_df <- trust_df %>%
-  gather("trust_for", "level_trst", 2:7)
+  gather("trust_for", "level_trst", 2:8)
 label_data <- trust_df
 trust_df$level_trst <- as.numeric(trust_df$level_trst)
 label_data$trust_for <- as.factor(label_data$trust_for)
@@ -1057,7 +1062,7 @@ base_data <- trust_df %>%
 
 # Make the plot
 ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +  
-  geom_bar(stat="identity", alpha=0.5) +
+  geom_bar(stat="identity", alpha=0.6) +
   ylim(-20,20) +
   theme_minimal() +
   theme(
@@ -1068,10 +1073,10 @@ ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +
     plot.margin = unit(rep(-1,4), "cm") 
   ) +
   coord_polar() + 
-  geom_text(data=label_data, aes(x=id, y=level_trst +1, label = trust_for, hjust=hjust), color="black",alpha=0.7, size=3, angle= label_data$angle, inherit.aes = FALSE ) +
+  geom_text(data=label_data, aes(x=id, y=level_trst +1, label = trust_for, hjust=hjust), color="black",alpha=0.8, size=2, angle= label_data$angle, inherit.aes = FALSE ) +
   
   geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.4 , inherit.aes = FALSE )  +
-  geom_text(data=base_data, aes(x = title, y = -8, label=cntry), hjust=c(rep(0.4,14)), colour = "black", alpha=1, size=5, inherit.aes = FALSE)
+  geom_text(data=base_data, aes(x = title, y = -8, label=cntry), hjust=c(rep(0.4,14)), colour = "black", alpha=1, size=4, inherit.aes = FALSE)
 
 
 
