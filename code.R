@@ -220,7 +220,7 @@ summary(full_dataset)
 
 
 # After being downloaded from the World Bank website, the original data sets have been pre-cleaned with spreadsheets
-# We can now import each variable in a separate data frame (done):
+# We can now import each variable in a separate data frame:
 
 # Get the list of sheet names from the Excel file
 
