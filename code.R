@@ -23,7 +23,7 @@ options(warn = -1)
 
 #SET YOUR WORKING DIRECTORY
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
+#setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
 
 full_dataset <- read.csv("ESS-Data-Wizard.csv")
 
@@ -219,75 +219,14 @@ summary(full_dataset)
 # Data Source 1 :WORLD BANK DATABANK CONTROL VARIABLES
 
 
-<<<<<<< HEAD
-# Option 1: do the data cleaning with R (didn't use this option, too time-consuming): 
-
-library(readxl)
-
-# download data from World Bank Open Data website to a new data frame, while selecting:
-# Year 2016 - 2021
-# 13 countries of interest with their country code
-# 16 variables of interest
-
-#EDIT YOUR WORKING DIRECTORY
-#setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
-
-world_bank <- read_excel("Data/P_Data_Extract_From_World_Development_Indicators.xlsx")
-
-view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
-
-#rename country code (from 3 -alpha code to 2-alpha code)
-
-unique(full_dataset$cntry)
-unique(world_bank$`Country Code`)
-
-world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
-                                                "CHE" = "CH",
-                                                "CZE" = "CZ",
-                                                "EST" = "EE",
-                                                "FIN" = "FI",
-                                                "FRA" = "FR",
-                                                "HUN" = "HU",
-                                                "ISL" = "IS",
-                                                "ITA" = "IT",
-                                                "LTU" = "LT",
-                                                "NLD" = "NL",
-                                                "NOR" = "NO",
-                                                "PRT" = "PT",
-                                                "SVN" = "SI"))
-
-unique(world_bank$cntry)
-
-# delete the previous 3-alpha country code variable
-
-world_bank <- world_bank %>%
-  select(cntry, everything()) %>%
-  select(-`Country Code`, -`Country Name`)
-
-view(world_bank)
-
-
-# do the data cleaning in R to be able to match each variable in the full_dataset
-
-
-
-
-
-
-=======
-# Option 1: see at the end of the code:
-  #do the data cleaning with R (didn't use this option, too time-consuming): 
->>>>>>> 925a8b9e75e9a1e9c3d9da84d9e28077f12374ec
-
-
-
-# Option 2: clean the World Bank data on Excel first, then import each variable in a separate data frame (done):
+# After being downloaded from the World Bank website, the original data sets have been pre-cleaned with spreadsheets
+# We can now import each variable in a separate data frame (done):
 
 # Get the list of sheet names from the Excel file
 
 #EDIT TO YOUR WORKING DIRECTORY
-excel_file_world_bank <- "/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
-excel_file_world_bank <- "Data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
+excel_file_world_bank <- "/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
+#excel_file_world_bank <- "Data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
 sheet_names <- excel_sheets(excel_file_world_bank)
 
 # Create an empty list to store the data frames
@@ -406,12 +345,9 @@ view(life_expectancy)
 
 # HDI (Human Development Index)
 
-<<<<<<< HEAD
-HDI <- read.csv("Data/HDI.csv")
-=======
 #EDIT TO YOUR WORKING DIRECTORY
+#HDI <- read.csv("Data/HDI.csv")
 HDI <- read.csv("HDI.csv")
->>>>>>> 925a8b9e75e9a1e9c3d9da84d9e28077f12374ec
 HDI <- HDI %>%
   filter(iso3 == "CHE"
          | iso3 == "CZE"
@@ -450,7 +386,8 @@ view(HDI)
 
 # Democracy Index
 
-democracy <- read_excel("Data/democracy_index.xlsx")
+#democracy <- read_excel("Data/democracy_index.xlsx")
+democracy <- read_excel("democracy_index.xlsx")
 democracy <- democracy %>%
   rename(cntry = "alpha-2")
 
@@ -458,13 +395,15 @@ view(democracy)
 
 # Crime Index
 
-crime <- read_excel("Data/crime_index.xlsx")
+#crime <- read_excel("Data/crime_index.xlsx")
+crime <- read_excel("crime_index.xlsx")
 
 view(crime)
 
 # Corruption Index
 
-corruption <- read_excel("Data/corruption_index.xlsx")
+#corruption <- read_excel("Data/corruption_index.xlsx")
+corruption <- read_excel("corruption_index.xlsx")
 corruption <- corruption %>%
   mutate(corruption, cntry = recode(ISO3,
                                     "CHE" = "CH",
@@ -488,14 +427,46 @@ view(corruption)
 
 
 
-
-
 # Data Source 3: COVID PANDEMIC CONTROL VARIABLES
 
 
 
-### [...]
+# REPEAT the importing process for covid-related control variables from different data sources
 
+
+  #from the WorldBank:
+
+
+# Import only specify sheets from tthe Excel file to individual data frames:
+
+
+# Death Rate
+
+death_rate <- read_excel("worldbank_covid.xlsx", 1)
+view(death_rate)
+
+# % of Population above 65
+
+pop_above_65 <- read_excel("worldbank_covid.xlsx", 2)
+view(pop_above_65)
+
+# Hospital beds per 1000 inhabitants
+
+beds_per_1000 <- read_excel("worldbank_covid.xlsx", 3)
+view(beds_per_1000)
+
+
+  # from the WHO
+
+# Out-of-Pocket Health Expenditure per capita
+
+out_of_pocket_exp <- read_excel("additional_expenditure.xlsx", 1)
+view(out_of_pocket_exp)
+
+# Private Health Expenditure per capita
+
+private_health_exp <- read_excel("additional_expenditure.xlsx", 2)
+view(private_health_exp)
 
 
 
@@ -505,7 +476,8 @@ view(corruption)
 
 # Create a new data frame with variables "essround" and "cntry"
 
-control_variables <- read_excel("Data/essround.xlsx")
+#control_variables <- read_excel("Data/essround.xlsx")
+control_variables <- read_excel("essround.xlsx")
 view(control_variables)
 
 
@@ -694,7 +666,7 @@ control_variables <- control_variables %>%
 
 #2. OTHER VARIABLES
 
-# HDI (Human Development Index)
+# hdi_index
 
 control_variables <- merge(control_variables, HDI[, c("cntry", "hdi_2017", "hdi_2019", "hdi_2021")], by = "cntry", all.x = TRUE)
 control_variables$hdi_index <- ifelse(control_variables$essround == 8,
@@ -705,7 +677,7 @@ control_variables$hdi_index <- ifelse(control_variables$essround == 8,
 control_variables <- control_variables %>%
   select(-hdi_2017, -hdi_2019, -hdi_2021)
 
-# Corruption Index
+# corruption_index
 
 control_variables <- merge(control_variables, corruption[, c("cntry", "corruption_index_2017", "corruption_index_2019", "corruption_index_2021")], by = "cntry", all.x = TRUE)
 control_variables$corruption_index <- ifelse(control_variables$essround == 8,
@@ -716,7 +688,7 @@ control_variables$corruption_index <- ifelse(control_variables$essround == 8,
 control_variables <- control_variables %>%
   select(-corruption_index_2017, -corruption_index_2019, -corruption_index_2021)
 
-# Crime Index
+# crime_index
 
 control_variables <- merge(control_variables, crime[, c("cntry", "crime_index_2017", "crime_index_2019", "crime_index_2021")], by = "cntry", all.x = TRUE)
 control_variables$crime_index <- ifelse(control_variables$essround == 8,
@@ -727,7 +699,7 @@ control_variables$crime_index <- ifelse(control_variables$essround == 8,
 control_variables <- control_variables %>%
   select(-crime_index_2017, -crime_index_2019, -crime_index_2021)
 
-# Democracy Index
+# democracy_index
 
 control_variables <- merge(control_variables, democracy[, c("cntry", "democracy_index_2017", "democracy_index_2019", "democracy_index_2021")], by = "cntry", all.x = TRUE)
 control_variables$democracy_index <- ifelse(control_variables$essround == 8,
@@ -740,21 +712,70 @@ control_variables <- control_variables %>%
 
 
 
-
 #3. COVID VARIABLES
 
 
 
-### [...]
+#death_rate
 
+control_variables <- merge(control_variables, death_rate[, c("cntry", "death_rate_2017", "death_rate_2019", "death_rate_2021")], by = "cntry", all.x = TRUE)
+control_variables$death_rate <- ifelse(control_variables$essround == 8,
+                                       control_variables$death_rate_2017,
+                                       ifelse(control_variables$essround == 9,
+                                              control_variables$death_rate_2019,
+                                              control_variables$death_rate_2021))
+control_variables <- control_variables %>%
+  select(-death_rate_2017, -death_rate_2019, -death_rate_2021)
 
+# pop_above_65
+
+control_variables <- merge(control_variables, pop_above_65[, c("cntry", "pop_above_65_2017", "pop_above_65_2019", "pop_above_65_2021")], by = "cntry", all.x = TRUE)
+control_variables$pop_above_65 <- ifelse(control_variables$essround == 8,
+                                         control_variables$pop_above_65_2017,
+                                         ifelse(control_variables$essround == 9,
+                                                control_variables$pop_above_65_2019,
+                                                control_variables$pop_above_65_2021))
+control_variables <- control_variables %>%
+  select(-pop_above_65_2017, -pop_above_65_2019, -pop_above_65_2021)
+
+# beds_per_1000
+
+control_variables <- merge(control_variables, beds_per_1000[, c("cntry", "beds_per_1000_2017", "beds_per_1000_2018", "beds_per_1000_latest")], by = "cntry", all.x = TRUE)
+control_variables$beds_per_1000 <- ifelse(control_variables$essround == 8,
+                                          control_variables$beds_per_1000_2017,
+                                          ifelse(control_variables$essround == 9,
+                                                 control_variables$beds_per_1000_2018,
+                                                 control_variables$beds_per_1000_latest))
+control_variables <- control_variables %>%
+  select(-beds_per_1000_2017, -beds_per_1000_2018, -beds_per_1000_latest)
+
+# out_of_pocket_exp
+
+control_variables <- merge(control_variables, out_of_pocket_exp[, c("cntry", "out_of_pocket_exp_2017", "out_of_pocket_exp_2019", "out_of_pocket_exp_2020")], by = "cntry", all.x = TRUE)
+control_variables$beds_per_1000 <- ifelse(control_variables$essround == 8,
+                                          control_variables$out_of_pocket_exp_2017,
+                                          ifelse(control_variables$essround == 9,
+                                                 control_variables$out_of_pocket_exp_2019,
+                                                 control_variables$out_of_pocket_exp_2020))
+control_variables <- control_variables %>%
+  select(-out_of_pocket_exp_2017, -out_of_pocket_exp_2019, -out_of_pocket_exp_2020)
+
+# private_health_exp
+
+control_variables <- merge(control_variables, private_health_exp[, c("cntry", "private_health_exp_2017", "private_health_exp_2019", "private_health_exp_2020")], by = "cntry", all.x = TRUE)
+control_variables$private_health_exp <- ifelse(control_variables$essround == 8,
+                                               control_variables$private_health_exp_2017,
+                                               ifelse(control_variables$essround == 9,
+                                                      control_variables$private_health_exp_2019,
+                                                      control_variables$private_health_exp_2020))
+control_variables <- control_variables %>%
+  select(-private_health_exp_2017, -private_health_exp_2019, -private_health_exp_2020)
 
 view(control_variables)
 
 
-
-
 #STEP III: MERGE the control_variables data frame with the original full_dataset
+
 
 full_dataset <- full_dataset %>%
   left_join(control_variables, by = c("cntry", "essround"))
@@ -765,15 +786,6 @@ full_dataset <- full_dataset %>%
   select(name, essround, edition, proddate, idno, cntry, population, GDP_per_capita, GDP_growth_per_capita, everything())
 
 view(full_dataset)
-
-
-
-# I want to set some of the numerical columns at 3 decimals ???
-
-
-
-#######################################
-
 
 
 ###################### METHOD #############################################
@@ -959,9 +971,9 @@ full_dataset$agerange <- factor((full_dataset$agerange), levels = c("0-14 years"
 # We check that everything is good
 levels(full_dataset$agerange)
 
-#age_range_overall_count <- table(full_dataset$agerange)
+age_range_overall_count <- table(full_dataset$agerange)
 #barplot(age_range_overall_count, beside = T, main = 'Distribution of age', xlab = 'Age Range', 
-#        ylab = 'Count', ylim = c(0,7000), col=c("#87CEFA", "#104E8B", "#56B4E9"), border = "white")
+ #      ylab = 'Count', ylim = c(0,7000), col=c("#87CEFA", "#104E8B", "#56B4E9"), border = "white")
 
 
 #Age distribution overall - pie chart
@@ -1116,142 +1128,5 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   geom_line() + geom_point() +
   ggtitle("Evolution of trust from 2017 to 2021") +
   theme_ipsum() +
-# <<<<<<< HEAD
   ylab("Average trust")
-
-
   
-  
-  
-
-<<<<<<< HEAD
-
-
-# CONTROL VARIABLES - Download, data cleaning and merging to the full_dataset
-
-
-
-
-
-#step 1: download data from World Bank Open Data website,  while selecting:
-  #Year 2015-2022 (+1980, 1990, 2000, 2010 as reference)
-  #13 countries of interest with their country code
-  #19 variables of interest
-
-#setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
-
-world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
-
-  # I want to set numerical columns at 2 decimals ???
-
-view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
-
-#step 2: rename country code (from 3 -alpha code to 2-alpha code)
-
-unique(full_dataset$cntry)
-unique(world_bank$`Country Code`)
-
-world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
-                                                "CHE" = "CH",
-                                                "CZE" = "CZ",
-                                                "EST" = "EE",
-                                                "FIN" = "FI",
-                                                "FRA" = "FR",
-                                                "HUN" = "HU",
-                                                "ISL" = "IS",
-                                                "ITA" = "IT",
-                                                "LTU" = "LT",
-                                                "NLD" = "NL",
-                                                "NOR" = "NO",
-                                                "PRT" = "PT",
-                                                "SVN" = "SI"))
-unique(world_bank$cntry)
-
-  #delete the previous 3-aplha country code variableù
-
-world_bank <- world_bank %>%
-  select(cntry, everything()) %>%
-  select(-`Country Code`)
-
-world_bank <- world_bank %>% arrange(`Series Code`)
-
-view(world_bank)
-
-#step 3: when ranking by World Bank Indicators, we can see that some of them do not have any value for the whole sample. We can drop these variables
-
-world_bank <- world_bank %>%
-      filter(`Series Code` != "IQ.CPA.TRAN.XQ", 
-             `Series Code` != "SE.XPD.PRIM.PC.ZS",
-             `Series Code` != "SE.XPD.SECO.PC.ZS",
-             `Series Code` != "SE.XPD.TERT.PC.ZS")
-=======
-  
-  
-  
-  
-  
-############################### CONTROL VARIABLES
-  
-  
-  # Option 1: see at the end of the code:
-  #do the data cleaning with R (didn't use this option, too time-consuming): 
-  
-  # download data from World Bank Open Data website to a new data frame, while selecting:
-  # Year 2016 - 2021
-  # 13 countries of interest with their country code
-  # 16 variables of interest
-  
-  #EDIT YOUR WORKING DIRECTORY
-  #setwd("/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/Control variables data")
-  
-  world_bank <- read_excel("P_Data_Extract_From_World_Development_Indicators.xlsx")
-  
-  view(world_bank) # As we can see, the country code of the World Bank data set is the 3-alpha code, however the ESS data set uses the 2-alpha country code 
-  
-  #rename country code (from 3 -alpha code to 2-alpha code)
-  
-  unique(full_dataset$cntry)
-  unique(world_bank$`Country Code`)
-  
-  world_bank <- mutate(world_bank, cntry = recode(`Country Code`,
-                                                  "CHE" = "CH",
-                                                  "CZE" = "CZ",
-                                                  "EST" = "EE",
-                                                  "FIN" = "FI",
-                                                  "FRA" = "FR",
-                                                  "HUN" = "HU",
-                                                  "ISL" = "IS",
-                                                  "ITA" = "IT",
-                                                  "LTU" = "LT",
-                                                  "NLD" = "NL",
-                                                  "NOR" = "NO",
-                                                  "PRT" = "PT",
-                                                  "SVN" = "SI"))
-  unique(world_bank$cntry)
-  
-  # delete the previous 3-alpha country code variable
-  
-  world_bank <- world_bank %>%
-    select(cntry, everything()) %>%
-    select(-`Country Code`, -`Country Name`)
-  
-  view(world_bank)
-  
-  #step 3: when ranking by World Bank Indicators, we can see that some of them do not have any value for the whole sample. We can drop these variables
-  
-  world_bank <- world_bank %>%
-    filter(`Series Code` != "IQ.CPA.TRAN.XQ", 
-           `Series Code` != "SE.XPD.PRIM.PC.ZS",
-           `Series Code` != "SE.XPD.SECO.PC.ZS",
-           `Series Code` != "SE.XPD.TERT.PC.ZS")
-  
-  
-  #step 4: do the data cleaning in R to be able to match each variable in the full_dataset
-  
->>>>>>> 925a8b9e75e9a1e9c3d9da84d9e28077f12374ec
-    
-
-
-=======
-# ylab("Average trust")
-# >>>>>>> ca39b4f173383f153e4835a2d5f76eb4794323dd
