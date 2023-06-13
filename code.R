@@ -797,27 +797,27 @@ grep("trstprl", colnames(full_dataset))
 grep("nwspol", colnames(full_dataset))
 
 # We assign them to the variables
-y <- full_dataset[, 40]
-X <- full_dataset[, -c(1:6,12,40)]
-d <- full_dataset[,12]
-
-#To prove the validity of our choice of methodology, we will procedurally employ different regeression methods to show their weaknesses.
-#First, normal OLS regression:
-OLS <- summary(lm(trstprl ~., data = full_dataset))$coefficients[1, ]
-
-#Secondly, Single step selection LASSO and Post-OLS
-
-lasso <- rlasso(y~., data = X, post = FALSE) # = Run the Rigorous LASSO = #
-selected <- which(coef(lasso)[-c(1:2)] !=0) # = Select relevant variables = #
-formula <- paste(c("y ~ d", names(selected)), collapse = "+")
-SS <- summary(lm(formula, data = X))$coefficients[1, ]
-
-#And finally, double selection
-DS <- rlassoEffects(trstprl~. , I=~nwspol, data=full_dataset)
-DS <-  summary(DS)$coefficients[1,]
-
-results <- rbind(OLS,SS,DS)
-results
+# y <- full_dataset[, 40]
+# X <- full_dataset[, -c(1:6,12,40)]
+# d <- full_dataset[,12]
+# 
+# #To prove the validity of our choice of methodology, we will procedurally employ different regeression methods to show their weaknesses.
+# #First, normal OLS regression:
+# OLS <- summary(lm(trstprl ~., data = full_dataset))$coefficients[1, ]
+# 
+# #Secondly, Single step selection LASSO and Post-OLS
+# 
+# lasso <- rlasso(y~., data = X, post = FALSE) # = Run the Rigorous LASSO = #
+# selected <- which(coef(lasso)[-c(1:2)] !=0) # = Select relevant variables = #
+# formula <- paste(c("y ~ d", names(selected)), collapse = "+")
+# SS <- summary(lm(formula, data = X))$coefficients[1, ]
+# 
+# #And finally, double selection
+# DS <- rlassoEffects(trstprl~. , I=~nwspol, data=full_dataset)
+# DS <-  summary(DS)$coefficients[1,]
+# 
+# results <- rbind(OLS,SS,DS)
+# results
 #Here we see that it is through double selection that we have the lowest standard error
 #The other models present extremely small/insignificant coefficient estimates
 
