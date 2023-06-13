@@ -225,8 +225,8 @@ summary(full_dataset)
 # Get the list of sheet names from the Excel file
 
 #EDIT TO YOUR WORKING DIRECTORY
-excel_file_world_bank <- "/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
-#excel_file_world_bank <- "Data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
+# excel_file_world_bank <- "/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
+excel_file_world_bank <- "Data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
 sheet_names <- excel_sheets(excel_file_world_bank)
 
 # Create an empty list to store the data frames
@@ -346,8 +346,8 @@ view(life_expectancy)
 # HDI (Human Development Index)
 
 #EDIT TO YOUR WORKING DIRECTORY
-#HDI <- read.csv("Data/HDI.csv")
-HDI <- read.csv("HDI.csv")
+HDI <- read.csv("Data/HDI.csv")
+# HDI <- read.csv("HDI.csv")
 HDI <- HDI %>%
   filter(iso3 == "CHE"
          | iso3 == "CZE"
@@ -386,8 +386,8 @@ view(HDI)
 
 # Democracy Index
 
-#democracy <- read_excel("Data/democracy_index.xlsx")
-democracy <- read_excel("democracy_index.xlsx")
+democracy <- read_excel("Data/democracy_index.xlsx")
+# democracy <- read_excel("democracy_index.xlsx")
 democracy <- democracy %>%
   rename(cntry = "alpha-2")
 
@@ -395,15 +395,15 @@ view(democracy)
 
 # Crime Index
 
-#crime <- read_excel("Data/crime_index.xlsx")
-crime <- read_excel("crime_index.xlsx")
+crime <- read_excel("Data/crime_index.xlsx")
+# crime <- read_excel("crime_index.xlsx")
 
 view(crime)
 
 # Corruption Index
 
-#corruption <- read_excel("Data/corruption_index.xlsx")
-corruption <- read_excel("corruption_index.xlsx")
+corruption <- read_excel("Data/corruption_index.xlsx")
+# corruption <- read_excel("corruption_index.xlsx")
 corruption <- corruption %>%
   mutate(corruption, cntry = recode(ISO3,
                                     "CHE" = "CH",
@@ -442,17 +442,17 @@ view(corruption)
 
 # Death Rate
 
-death_rate <- read_excel("worldbank_covid.xlsx", 1)
+death_rate <- read_excel("Data/worldbank_covid.xlsx", 1)
 view(death_rate)
 
 # % of Population above 65
 
-pop_above_65 <- read_excel("worldbank_covid.xlsx", 2)
+pop_above_65 <- read_excel("Data/worldbank_covid.xlsx", 2)
 view(pop_above_65)
 
 # Hospital beds per 1000 inhabitants
 
-beds_per_1000 <- read_excel("worldbank_covid.xlsx", 3)
+beds_per_1000 <- read_excel("Data/worldbank_covid.xlsx", 3)
 view(beds_per_1000)
 
 
@@ -460,12 +460,12 @@ view(beds_per_1000)
 
 # Out-of-Pocket Health Expenditure per capita
 
-out_of_pocket_exp <- read_excel("additional_expenditure.xlsx", 1)
+out_of_pocket_exp <- read_excel("Data/additional_expenditure.xlsx", 1)
 view(out_of_pocket_exp)
 
 # Private Health Expenditure per capita
 
-private_health_exp <- read_excel("additional_expenditure.xlsx", 2)
+private_health_exp <- read_excel("Data/additional_expenditure.xlsx", 2)
 view(private_health_exp)
 
 
@@ -476,8 +476,8 @@ view(private_health_exp)
 
 # Create a new data frame with variables "essround" and "cntry"
 
-#control_variables <- read_excel("Data/essround.xlsx")
-control_variables <- read_excel("essround.xlsx")
+control_variables <- read_excel("Data/essround.xlsx")
+# control_variables <- read_excel("essround.xlsx")
 view(control_variables)
 
 
