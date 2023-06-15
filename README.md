@@ -50,6 +50,8 @@ For thoroughness, we also conducted a fixed effects model to account for country
 In summary, based on the double selection analysis, the selected variable (exposure to news media) does not have a statistically significant effect on reported trust in government.
 
 ### References
+- Demography of Europe—More women than men. (n.d.). Demography of Europe. Retrieved June 15, 2023, from https://www.istat.it/demografiadelleuropa/bloc-1b.html?lang=it
+
 - European Social Survey European Research Infrastructure (ESS ERIC). (2023). ESS10 integrated file, edition 3.0 [Data set]. Sikt - Norwegian Agency for Shared Services in Education and Research. https://doi.org/10.18712/ESS10E03_0
 
 - Numbeo. (n.d.). Crime Index by Country 2023 [Data set]. Retrieved June 15, 2023, from https://www.numbeo.com/crime/rankings_by_country.jsp
@@ -60,10 +62,13 @@ In summary, based on the double selection analysis, the selected variable (expos
 
 - United Nations. (n.d.). Human Development Index. In Human Development Reports. United Nations. Retrieved June 15, 2023, from https://hdr.undp.org/data-center/human-development-index
 
-- World Bank. (n.d.). World Development Indicators | DataBank [Data set]. Retrieved June 15, 2023, from https://databank.worldbank.org/reports.aspx?source=2&series=SI.POV.DDAY&country=CHE,CZE,EST,FIN,FRA,HUN,ISL,ITA,LTU,NLD,NOR,PRT,SVN#
+- World Bank. (n.d.-a). European Union: Age distribution of inhabitants from 2011 to 2021 [Graph] [Data set]. Retrieved June 15, 2023, from https://www.statista.com/statistics/253408/age-distribution-in-the-european-union-eu/
+
+- World Bank. (n.d.-b). World Development Indicators | DataBank [Data set]. Retrieved June 15, 2023, from https://databank.worldbank.org/reports.aspx?source=2&series=SI.POV.DDAY&country=CHE,CZE,EST,FIN,FRA,HUN,ISL,ITA,LTU,NLD,NOR,PRT,SVN#
 
 - World Health Organization. (n.d.-a). Global Health Expenditure Database [Data set]. Retrieved June 15, 2023, from https://apps.who.int/nha/database/Select/Indicators/en
 
 - World Health Organization. (n.d.-b). Indicators [Data set]. Retrieved June 15, 2023, from https://www.who.int/data/gho/data/indicators
 
 - World Health Organization. (n.d.-c). The National health Workforce Accounts database [Data set]. Retrieved June 15, 2023, from https://www.who.int/data/gho/data/themes/topics/health-workforce
+
