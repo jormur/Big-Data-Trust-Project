@@ -1133,7 +1133,27 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   ggtitle("Evolution of trust from 2017 to 2021") +
   theme_ipsum() +
   ylab("Average trust")
-  
+
+
+#Evolution of media exposure over time 
+mediaexp_df <- full_dataset %>%
+  select(cntry, year, netustm, nwspol) %>%
+  group_by(year) %>%
+  summarize(internet = mean(netustm), tv_radio_newspaper = mean(nwspol))
+
+
+View(mediaexp_df)
+mediaexp_df <- mediaexp_df %>%
+  gather("channel", "avg_use", 2:3)
+View(mediaexp_df)
+
+ggplot(data = mediaexp_df, aes(x = year, y = avg_use, group = channel, color = channel)) +
+  geom_line() + geom_point() +
+  ggtitle("Evolution of media exposure overtime") +
+  theme_ipsum() +
+  ylab("Average use (minutes per day)")
+
+
 #Corr-Plot
 # create a matrix of data
 data_cor <- full_dataset[, c(7:50)]
