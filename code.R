@@ -11,11 +11,15 @@ library(leaflet)
 library(magrittr)
 library(maps)
 library(mapproj)
+library(openxlsx)
 library(plm)
 library(plotly)
 library(readxl)
+library(sf)
 library(tidyverse)
+library(tmap)
 library(viridis)
+
 
 
 ### IMPORTING DATA TO R ########
@@ -1142,4 +1146,30 @@ corrplot(corr_matrix, order="hclust",
          tl.cex = 0.7,
          tl.col = "black")
 
-corrploot
+corrplot
+
+########Chloropleth Map#########
+
+library(dplyr, warn.conflicts = FALSE)
+
+# EDIT YOUR WORKING DIRECTORY
+europe_map <- st_read("Data/NUTS_RG_20M_2021_3035.shp/NUTS_RG_20M_2021_3035.shp")
+
+glimpse(europe_map)
+europe_map$CNTR_CODE
+europe_map$NUTS_NAME
+europe_map$NAME_LATN
+
+europe_map <- europe_map |>
+  rename(cntry=CNTR_CODE)
+
+dataset_trstprl <- full_dataset[, c(6,37)]
+
+outcome_trstprl <- full_join(europe_map, dataset_trstprl, by= "cntry")
+
+colors=c("#87CEFA", "#00BFFF", "#56B4E9", "#1C86EE", "#1874CD", "#104E8B","#00008B")
+
+#####Modified 2#####
+tmap_save(map_outcome_trstprl, filename = "outcome_trstprl_map.png", width = 1500, height = 1500, dpi = 300)
+
+
