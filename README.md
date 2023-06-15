@@ -3,10 +3,15 @@
 
 **National Chengchi University**
 
+### Contributors
 111266018 萬瓏棠 Valentin
+
 111266012 莫喬丹 Jordan
+
 110266009 謝明穎 Carol
+
 110266003 郭珈君 Amanda
+
 111300353 瑪莉李 Mary
 
 ### Project Description
