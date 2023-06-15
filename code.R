@@ -1096,6 +1096,30 @@ ggplot(trust_df, aes(x= as.factor(id), y=level_trst, fill=cntry)) +
 
 
 
+#Internet use and media exposure to politics in different countries
+mediaexp_df <- full_dataset %>%
+  select(cntry, netustm, nwspol) %>%
+  group_by(cntry) %>%
+  summarize(internet = mean(netustm), tv_radio_newspaper = mean(nwspol))
+
+mediaexp_df$cntry <- as.factor(mediaexp_df$cntry)
+
+mediaexp_df <- mediaexp_df %>%
+  gather("channel", "avg_use", 2:3)
+
+View(mediaexp_df)
+col_palette = c("#87CEFA", "#104E8B")
+
+ggplot(mediaexp_df, aes(x= cntry, y=avg_use, fill=channel)) +  
+  geom_bar(stat="identity") +
+  ylim(0,400) +
+  scale_fill_manual(values= col_palette) +
+  ggtitle("Internet use and media exposure to politics in different countries") +
+  theme_classic() +
+  ylab("Average use (minutes per day)") +
+  xlab("Country")
+
+
 
 # Evolution of trust overtime
 
