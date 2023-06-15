@@ -1169,6 +1169,17 @@ outcome_trstprl <- full_join(europe_map, dataset_trstprl, by= "cntry")
 
 colors=c("#87CEFA", "#00BFFF", "#56B4E9", "#1C86EE", "#1874CD", "#104E8B","#00008B")
 
+map_outcome_trstprl <- tm_shape(outcome_trstprl) +
+  tm_fill(col = "trstprl", palette = "Greens", n = 8,
+          title = "The Level of Trust in Government", style = "cont") +
+  tm_borders(col = "white", lwd = 0.01) +
+  tm_compass(type = "arrow", position = c("right", "bottom"), size = 2) +
+  tm_scale_bar(text.size = 0.5, position = c("center", "bottom")) +
+  tm_layout(title.size = 2.5, legend.text.size = 0.8, legend.position = c("left", "bottom"))  # Adjusted legend position
+
+map_outcome_trstprl
+
+
 #####Modified 2#####
 tmap_save(map_outcome_trstprl, filename = "outcome_trstprl_map.png", width = 1500, height = 1500, dpi = 300)
 
