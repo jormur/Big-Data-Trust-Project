@@ -827,6 +827,9 @@ grep("nwspol", colnames(full_dataset))
 
 ### FORMAL IMPLEMENTATION ###
 #Therefore, we move on with the formal implementation of the double selection method.
+#We will processually run the model for the different relevant outcome variables
+
+#TRUST IN PARLIAMENT
 y <- full_dataset[, 40]
 X <- as.matrix(full_dataset[, -c(1:6,12,40)])
 d <- full_dataset[, 12]
@@ -859,6 +862,162 @@ panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
 FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
 
 # Obtain model summary
+summary(FE_model)
+
+#####
+
+#TRUST IN LEGAL SYSTEM
+grep("trstlgl", colnames(full_dataset))
+
+y <- full_dataset[, 37]
+X <- as.matrix(full_dataset[, -c(1:6,12,37)])
+d <- full_dataset[, 12]
+varnames <- colnames(full_dataset)
+
+doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
+selected_vars <- doubleselect$selection.index
+selected_data <- full_dataset[, selected_vars]
+selected_data <- cbind(full_dataset$idno, full_dataset$cntry, full_dataset$trstlgl, full_dataset$nwspol,
+                       full_dataset$proddate, selected_data)
+
+summary(doubleselect)
+confint(doubleselect)
+print(doubleselect)
+plot(doubleselect)
+
+#FIXED EFFECTS MODEL 
+panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
+FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+summary(FE_model)
+
+#####
+
+#TRUST IN POLICE
+grep("trstplc", colnames(full_dataset))
+
+y <- full_dataset[, 38]
+X <- as.matrix(full_dataset[, -c(1:6,12,38)])
+d <- full_dataset[, 12]
+varnames <- colnames(full_dataset)
+
+doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
+selected_vars <- doubleselect$selection.index
+selected_data <- full_dataset[, selected_vars]
+selected_data <- cbind(full_dataset$idno, full_dataset$cntry, full_dataset$trstplc, full_dataset$nwspol,
+                       full_dataset$proddate, selected_data)
+
+summary(doubleselect)
+confint(doubleselect)
+print(doubleselect)
+plot(doubleselect)
+
+#FIXED EFFECTS MODEL 
+panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
+FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+summary(FE_model)
+
+#####
+
+#TRUST IN POLITICIANS
+grep("trstplt", colnames(full_dataset))
+
+y <- full_dataset[, 39]
+X <- as.matrix(full_dataset[, -c(1:6,12,39)])
+d <- full_dataset[, 12]
+varnames <- colnames(full_dataset)
+
+doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
+selected_vars <- doubleselect$selection.index
+selected_data <- full_dataset[, selected_vars]
+selected_data <- cbind(full_dataset$idno, full_dataset$cntry, full_dataset$trstplt, full_dataset$nwspol,
+                       full_dataset$proddate, selected_data)
+
+summary(doubleselect)
+confint(doubleselect)
+print(doubleselect)
+plot(doubleselect)
+
+#FIXED EFFECTS MODEL 
+panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
+FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+summary(FE_model)
+
+#####
+
+#TRUST IN POLITICAL PARTIES
+grep("trstprt", colnames(full_dataset))
+
+y <- full_dataset[, 41]
+X <- as.matrix(full_dataset[, -c(1:6,12,41)])
+d <- full_dataset[, 12]
+varnames <- colnames(full_dataset)
+
+doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
+selected_vars <- doubleselect$selection.index
+selected_data <- full_dataset[, selected_vars]
+selected_data <- cbind(full_dataset$idno, full_dataset$cntry, full_dataset$trstprt, full_dataset$nwspol,
+                       full_dataset$proddate, selected_data)
+
+summary(doubleselect)
+confint(doubleselect)
+print(doubleselect)
+plot(doubleselect)
+
+#FIXED EFFECTS MODEL 
+panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
+FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+summary(FE_model)
+
+#####
+
+#TRUST IN EUROPEAN PARLIAMENT
+grep("trstep", colnames(full_dataset))
+
+y <- full_dataset[, 36]
+X <- as.matrix(full_dataset[, -c(1:6,12,36)])
+d <- full_dataset[, 12]
+varnames <- colnames(full_dataset)
+
+doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
+selected_vars <- doubleselect$selection.index
+selected_data <- full_dataset[, selected_vars]
+selected_data <- cbind(full_dataset$idno, full_dataset$cntry, full_dataset$trstep, full_dataset$nwspol,
+                       full_dataset$proddate, selected_data)
+
+summary(doubleselect)
+confint(doubleselect)
+print(doubleselect)
+plot(doubleselect)
+
+#FIXED EFFECTS MODEL 
+panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
+FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+summary(FE_model)
+
+#####
+
+#TRUST IN THE UNITED NATIONS
+grep("trstun", colnames(full_dataset))
+
+y <- full_dataset[, 42]
+X <- as.matrix(full_dataset[, -c(1:6,12,42)])
+d <- full_dataset[, 12]
+varnames <- colnames(full_dataset)
+
+doubleselect <- rlassoEffect(x=X, y=y, d=d, method = "double selection")
+selected_vars <- doubleselect$selection.index
+selected_data <- full_dataset[, selected_vars]
+selected_data <- cbind(full_dataset$idno, full_dataset$cntry, full_dataset$trstun, full_dataset$nwspol,
+                       full_dataset$proddate, selected_data)
+
+summary(doubleselect)
+confint(doubleselect)
+print(doubleselect)
+plot(doubleselect)
+
+#FIXED EFFECTS MODEL 
+panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
+FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
 summary(FE_model)
 
 ######################################################################
