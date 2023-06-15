@@ -11,11 +11,15 @@ library(leaflet)
 library(magrittr)
 library(maps)
 library(mapproj)
+library(openxlsx)
 library(plm)
 library(plotly)
 library(readxl)
+library(sf)
 library(tidyverse)
+library(tmap)
 library(viridis)
+
 
 
 ### IMPORTING DATA TO R ########
@@ -1130,3 +1134,53 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   theme_ipsum() +
   ylab("Average trust")
   
+#Corr-Plot
+# create a matrix of data
+data_cor <- full_dataset[, c(7:50)]
+data_cor
+# calculate the correlation matrix
+corr_matrix <- cor(data_cor)
+
+corrplot(corr_matrix, order="hclust",
+         addrect=4,
+         tl.cex = 0.7,
+         tl.col = "black")
+
+corrplot
+
+########Chloropleth Map#########
+
+library(dplyr, warn.conflicts = FALSE)
+
+# EDIT YOUR WORKING DIRECTORY
+europe_map <- st_read("Data/NUTS_RG_20M_2021_3035.shp/NUTS_RG_20M_2021_3035.shp")
+
+glimpse(europe_map)
+europe_map$CNTR_CODE
+europe_map$NUTS_NAME
+europe_map$NAME_LATN
+
+europe_map <- europe_map |>
+  rename(cntry=CNTR_CODE)
+
+dataset_trstprl <- full_dataset[, c(6,37)]
+
+outcome_trstprl <- full_join(europe_map, dataset_trstprl, by= "cntry")
+
+colors=c("#87CEFA", "#00BFFF", "#56B4E9", "#1C86EE", "#1874CD", "#104E8B","#00008B")
+
+map_outcome_trstprl <- tm_shape(outcome_trstprl) +
+  tm_fill(col = "trstprl", palette = "Greens", n = 8,
+          title = "The Level of Trust in Government", style = "cont") +
+  tm_borders(col = "white", lwd = 0.01) +
+  tm_compass(type = "arrow", position = c("right", "bottom"), size = 2) +
+  tm_scale_bar(text.size = 0.5, position = c("center", "bottom")) +
+  tm_layout(title.size = 2.5, legend.text.size = 0.8, legend.position = c("left", "bottom"))  # Adjusted legend position
+
+map_outcome_trstprl
+
+
+#####Modified 2#####
+tmap_save(map_outcome_trstprl, filename = "outcome_trstprl_map.png", width = 1500, height = 1500, dpi = 300)
+
+
