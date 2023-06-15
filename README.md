@@ -1,4 +1,4 @@
-# IS IGNORANCE BLISS?
+# Is Ignorance Bliss?
 ## Media Exposure and Government Confidence in a Dynamic Landscape
 
 **National Chengchi University**
