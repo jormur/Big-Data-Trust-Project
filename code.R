@@ -1130,3 +1130,16 @@ ggplot(data = trust_df, aes(x = year, y = level_trst, group = trust_for, color =
   theme_ipsum() +
   ylab("Average trust")
   
+#Corr-Plot
+# create a matrix of data
+data_cor <- full_dataset[, c(7:50)]
+data_cor
+# calculate the correlation matrix
+corr_matrix <- cor(data_cor)
+
+corrplot(corr_matrix, order="hclust",
+         addrect=4,
+         tl.cex = 0.7,
+         tl.col = "black")
+
+corrploot
