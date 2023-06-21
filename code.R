@@ -436,7 +436,7 @@ view(corruption)
   #from the WorldBank:
 
 
-# Import only specify sheets from tthe Excel file to individual data frames:
+# Import only specify sheets from the Excel file to individual data frames:
 
 
 # Death Rate
