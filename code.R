@@ -1,4 +1,5 @@
 #load packages
+library(corrplot)
 library(data.table)
 library(dplyr)
 library(ggplot2)
@@ -27,7 +28,6 @@ options(warn = -1)
 
 #SET YOUR WORKING DIRECTORY
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-#setwd("/Users/maryceciarelli/Desktop/Big Data for Social Analysis/Group project")
 
 full_dataset <- read.csv("ESS-Data-Wizard.csv")
 
@@ -229,7 +229,6 @@ summary(full_dataset)
 # Get the list of sheet names from the Excel file
 
 #EDIT TO YOUR WORKING DIRECTORY
-# excel_file_world_bank <- "/Users/valentincatteau/Desktop/Education/3. NCCU/2. S2 - Spring 2023/3. Big Data for Social Analysis/Assignments/Group project/Final paper/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
 excel_file_world_bank <- "Data/P_Data_Extract_From_World_Development_Indicators_clean.xlsx"
 sheet_names <- excel_sheets(excel_file_world_bank)
 
@@ -351,7 +350,6 @@ view(life_expectancy)
 
 #EDIT TO YOUR WORKING DIRECTORY
 HDI <- read.csv("Data/HDI.csv")
-# HDI <- read.csv("HDI.csv")
 HDI <- HDI %>%
   filter(iso3 == "CHE"
          | iso3 == "CZE"
@@ -391,7 +389,6 @@ view(HDI)
 # Democracy Index
 
 democracy <- read_excel("Data/democracy_index.xlsx")
-# democracy <- read_excel("democracy_index.xlsx")
 democracy <- democracy %>%
   rename(cntry = "alpha-2")
 
@@ -400,14 +397,12 @@ view(democracy)
 # Crime Index
 
 crime <- read_excel("Data/crime_index.xlsx")
-# crime <- read_excel("crime_index.xlsx")
 
 view(crime)
 
 # Corruption Index
 
 corruption <- read_excel("Data/corruption_index.xlsx")
-# corruption <- read_excel("corruption_index.xlsx")
 corruption <- corruption %>%
   mutate(corruption, cntry = recode(ISO3,
                                     "CHE" = "CH",
@@ -472,6 +467,41 @@ view(out_of_pocket_exp)
 private_health_exp <- read_excel("Data/additional_expenditure.xlsx", 2)
 view(private_health_exp)
 
+# Number of doctors per 10,000 inhabitants
+
+doctors_per_10000 <- read_excel("Data/medical_personnel.xlsx", 2)
+
+doctors_per_10000 <- doctors_per_10000 %>%
+  rename(cntry = "alpha_2") %>%
+  select(-Country) %>%
+  rename(doctors_per_10000_year_ESS_8 = "year_ESS_8", doctors_per_10000_year_ESS_9 = "year_ESS_9", doctors_per_10000_latest = "year_ESS_10")
+
+view(doctors_per_10000)
+
+# Number of nurses per 10,000 inhabitants
+
+nurses_per_10000 <- read_excel("Data/medical_personnel.xlsx", 4)
+
+nurses_per_10000 <- nurses_per_10000 %>%
+  mutate(nurses_per_10000, cntry = recode(alpha_3,
+                                          "CHE" = "CH",
+                                          "CZE" = "CZ",
+                                          "EST" = "EE",
+                                          "FIN" = "FI",
+                                          "FRA" = "FR",
+                                          "HUN" = "HU",
+                                          "ISL" = "IS",
+                                          "ITA" = "IT",
+                                          "LTU" = "LT",
+                                          "NLD" = "NL",
+                                          "NOR" = "NO",
+                                          "PRT" = "PT",
+                                          "SVN" = "SI")) %>%
+  select(cntry, '2017', '2019', latest) %>%
+  rename(nurses_per_10000_2017 = "2017", nurses_per_10000_2019 = "2019", nurses_per_10000_latest = "latest")
+
+view(nurses_per_10000)
+
 
 
 #STEP II: MERGE all the control variables into a new data frame called control_variables
@@ -481,7 +511,6 @@ view(private_health_exp)
 # Create a new data frame with variables "essround" and "cntry"
 
 control_variables <- read_excel("Data/essround.xlsx")
-# control_variables <- read_excel("essround.xlsx")
 view(control_variables)
 
 
@@ -775,6 +804,29 @@ control_variables$private_health_exp <- ifelse(control_variables$essround == 8,
 control_variables <- control_variables %>%
   select(-private_health_exp_2017, -private_health_exp_2019, -private_health_exp_2020)
 
+# doctors_per_10000
+
+control_variables <- merge(control_variables, doctors_per_10000[, c("cntry", "doctors_per_10000_year_ESS_8", "doctors_per_10000_year_ESS_9", "doctors_per_10000_latest")], by = "cntry", all.x = TRUE)
+control_variables$doctors_per_10000 <- ifelse(control_variables$essround == 8,
+                                              control_variables$doctors_per_10000_year_ESS_8,
+                                              ifelse(control_variables$essround == 9,
+                                                     control_variables$doctors_per_10000_year_ESS_9,
+                                                     control_variables$doctors_per_10000_latest))
+control_variables <- control_variables %>%
+  select(-doctors_per_10000_year_ESS_8, -doctors_per_10000_year_ESS_9, -doctors_per_10000_latest)
+
+
+# nurses_per_10000
+
+control_variables <- merge(control_variables, nurses_per_10000[, c("cntry", "nurses_per_10000_2017", "nurses_per_10000_2019", "nurses_per_10000_latest")], by = "cntry", all.x = TRUE)
+control_variables$nurses_per_10000 <- ifelse(control_variables$essround == 8,
+                                             control_variables$nurses_per_10000_2017,
+                                             ifelse(control_variables$essround == 9,
+                                                    control_variables$nurses_per_10000_2019,
+                                                    control_variables$nurses_per_10000_latest))
+control_variables <- control_variables %>%
+  select(-nurses_per_10000_2017, -nurses_per_10000_2019, -nurses_per_10000_latest)
+
 view(control_variables)
 
 
@@ -790,6 +842,8 @@ full_dataset <- full_dataset %>%
   select(name, essround, edition, proddate, idno, cntry, population, GDP_per_capita, GDP_growth_per_capita, everything())
 
 view(full_dataset)
+
+
 
 
 ###################### METHOD #############################################
@@ -991,7 +1045,7 @@ plot(doubleselect)
 
 #FIXED EFFECTS MODEL 
 panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
-FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+FE_model <- plm(full_dataset$trstprl ~ ., data = panel_data, model = "within")
 summary(FE_model)
 
 #####
@@ -1017,7 +1071,7 @@ plot(doubleselect)
 
 #FIXED EFFECTS MODEL 
 panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
-FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+FE_model <- plm(full_dataset$trstprl ~ ., data = panel_data, model = "within")
 summary(FE_model)
 
 ######################################################################
@@ -1349,7 +1403,6 @@ corrplot(corr_matrix, order="hclust",
          tl.cex = 0.7,
          tl.col = "black")
 
-corrplot
 
 ########Chloropleth Map#########
 
@@ -1357,6 +1410,7 @@ library(dplyr, warn.conflicts = FALSE)
 
 # EDIT YOUR WORKING DIRECTORY
 europe_map <- st_read("Data/NUTS_RG_20M_2021_3035.shp/NUTS_RG_20M_2021_3035.shp")
+
 
 glimpse(europe_map)
 europe_map$CNTR_CODE
@@ -1366,7 +1420,7 @@ europe_map$NAME_LATN
 europe_map <- europe_map |>
   rename(cntry=CNTR_CODE)
 
-dataset_trstprl <- full_dataset[, c(6,37)]
+dataset_trstprl <- full_dataset[, c(6,40)]
 
 outcome_trstprl <- full_join(europe_map, dataset_trstprl, by= "cntry")
 
@@ -1381,9 +1435,5 @@ map_outcome_trstprl <- tm_shape(outcome_trstprl) +
   tm_layout(title.size = 2.5, legend.text.size = 0.8, legend.position = c("left", "bottom"))  # Adjusted legend position
 
 map_outcome_trstprl
-
-
-#####Modified 2#####
-tmap_save(map_outcome_trstprl, filename = "outcome_trstprl_map.png", width = 1500, height = 1500, dpi = 300)
 
 
