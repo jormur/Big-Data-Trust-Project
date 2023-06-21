@@ -913,7 +913,7 @@ plot(doubleselect)
 panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
 
 # Fit fixed effects model
-FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+FE_model <- plm(full_dataset$trstprl ~ ., data = panel_data, model = "within")
 
 # Obtain model summary
 summary(FE_model)
@@ -941,7 +941,7 @@ plot(doubleselect)
 
 #FIXED EFFECTS MODEL 
 panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
-FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+FE_model <- plm(full_dataset$trstprl ~ ., data = panel_data, model = "within")
 summary(FE_model)
 
 #####
@@ -967,7 +967,7 @@ plot(doubleselect)
 
 #FIXED EFFECTS MODEL 
 panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
-FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+FE_model <- plm(full_dataset$trstprl ~ ., data = panel_data, model = "within")
 summary(FE_model)
 
 #####
@@ -993,7 +993,7 @@ plot(doubleselect)
 
 #FIXED EFFECTS MODEL 
 panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
-FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+FE_model <- plm(full_dataset$trstprl ~ ., data = panel_data, model = "within")
 summary(FE_model)
 
 #####
@@ -1019,7 +1019,7 @@ plot(doubleselect)
 
 #FIXED EFFECTS MODEL 
 panel_data <- pdata.frame(selected_data, index = c("full_dataset.idno"))
-FE_model <- plm(full_dataset.trstprl ~ ., data = panel_data, model = "within")
+FE_model <- plm(full_dataset$trstprl ~ ., data = panel_data, model = "within")
 summary(FE_model)
 
 #####
