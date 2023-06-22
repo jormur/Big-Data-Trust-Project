@@ -27,7 +27,7 @@ We plan to use the European Social Survey, which is an academically driven cross
 The large size of our datasets (each dataset contained a number of observations in a range from 40.000 to 54.000) was one of the main strengths of our analysis. However, it required us to spend a relevant amount of time and effort on data cleaning.
 
 ### File Structure
-The main file is found as *code.R*. The ESS dataset is in the present folder as *ESS-Data-Wizard.csv*, while the series of control variables is found in the *Data* folder.
+The main file is found as *code.R*. The ESS dataset is in the present folder as *ESS-Data-Wizard.csv*, while the series of control variables is found in the *Data* folder. It is best to clone the file structure to your local system to run the code without error.
 
 ### Methodology
 In our study, we aimed to examine the relationship between exposure to news media and reported trust in government using a large dataset consisting of three rounds of survey data collected over a span of six years. With tens of thousands of individuals providing responses to hundreds of questions, our dataset contained a wealth of information, including more than 75 variables.
@@ -41,13 +41,35 @@ Furthermore, we utilized a fixed effects model to account for unobserved time-in
 By employing both the double selection and fixed effects models, we ensured a robust analysis that addresses the complexities of our dataset. The double selection model enabled us to identify the key variable of interest, while the fixed effects model accounted for unobserved time-invariant factors. Together, these models provided a comprehensive and rigorous framework for examining the relationship between exposure to news media and reported trust in government, enhancing the validity and reliability of our findings.
 
 ### Results
-The output of summary(doubleselect) [shown in the table below] shows the estimate, standard error, t-value, and p-value for the effect of the selected variable on the outcome variable (trust in government). In this case, the estimated coefficient for "d1" is 1.276e-05, with a standard error of 1.552e-04. The t-value of 0.082 suggests that the estimated coefficient is not statistically significant (p-value = 0.935). Therefore, based on these results, there is no significant effect of exposure to news media on reported trust in government.
+The analysis of the effect of media exposure on trust in various institutions yielded interesting findings. The estimated effects of media exposure on trust levels in different institutions were examined using the double selection method. The results indicate that none of the estimated effects were statistically significant.
 
-The output of confint(doubleselect) provides the 95% confidence interval for the estimated coefficient. In this case, the confidence interval for "d1" ranges from -0.0002914995 to 0.0003170138. Since the interval includes zero, it further supports the finding that the effect of exposure to news media on trust in government is not statistically significant.
+For the variables related to trust, the measured trust levels followed a decreasing order: police, legal system, United Nations, parliament, EU, political parties, and politicians. Notably, all trust levels showed an overall increasing trend over the observed years, except for trust in the legal system, which exhibited a slight wavering and a lesser increase compared to the other institutions.
 
-For thoroughness, we also conducted a fixed effects model to account for country and time effects. The estimates of that model are shown in the table below. Once again, it shows very minute estimates.
+The lack of statistically significant relationships between media exposure and trust in these institutions challenges the prevailing notion that media plays a direct and influential role in shaping trust levels. It suggests that other factors beyond media exposure may have a more significant impact on trust formation.
 
-In summary, based on the double selection analysis, the selected variable (exposure to news media) does not have a statistically significant effect on reported trust in government.
+The distinct trend observed in trust in the legal system, where it did not increase as significantly as other institutions, is intriguing. This discrepancy might be attributed to specific factors related to the legal system itself or contextual influences that affect public perceptions of trust in this particular institution. Further qualitative investigation and analysis of contextual factors can shed light on these dynamics and provide a deeper understanding of the nuances surrounding trust in the legal system.
+
+Regarding trust in the European Parliament, the estimated effect was also not statistically significant. This result diverges from the overall increasing trend observed in trust levels for the other institutions. The implications of this finding could suggest that media exposure might have a different impact on trust in the European Parliament compared to other institutions. Factors such as the perception of the European Union, political dynamics at the European level, or the influence of other social and cultural factors may contribute to this distinct result. Exploring these factors in future research can enhance our understanding of the complexities involved in shaping trust in the European Parliament and its relationship with media exposure.
+
+The analysis reveals that media exposure does not demonstrate a statistically significant effect on trust levels in various institutions. The differing trends in trust levels, particularly in the legal system and the European Parliament, warrant further investigation to uncover the underlying dynamics that contribute to these patterns. The findings highlight the need for a comprehensive and multidimensional approach to understanding the intricate relationship between media, trust, and public perceptions in different institutional contexts.
+
+For thoroughness, we also conducted a fixed effects model to account for country and time effects. The estimates of that model are shown in the table below for trust in European parliament (as that had the greatest deviation for the previous regression estimates. 
+
+The fixed effects model was applied to analyze the relationship between trust in the European Parliament and various factors. The estimated effects of different variables on trust in the European Parliament are presented below. However, it should be noted that not all of the estimated effects were statistically significant.
+
+Among the country-specific fixed effects, the coefficients for several countries were negative but did not reach statistical significance. These include the Czech Republic, Estonia, Finland, France, Hungary, Italy, Lithuania, Netherlands, Norway, Portugal, and Slovenia. The negative coefficients suggest that individuals from these countries tended to exhibit lower levels of trust in the European Parliament compared to the reference country.
+
+On the other hand, the coefficient for Iceland was positive and statistically significant, indicating that individuals from Iceland had higher levels of trust in the European Parliament compared to the reference country. This finding suggests that contextual factors specific to Iceland may have contributed to the higher trust levels observed.
+
+Regarding the other variables, several exhibited statistically significant effects on trust in the European Parliament. Notably, variables such as net use time, education level, government satisfaction, race discrimination, and death rate showed significant positive effects on trust. This implies that individuals who spent more time using the internet, had higher education levels, expressed greater satisfaction with the government, reported less race discrimination, and lived in countries with lower death rates tended to have higher levels of trust in the European Parliament.
+
+Conversely, variables such as the perception of media influence, political polarization, and economic indicators did not exhibit statistically significant effects on trust in the European Parliament. This suggests that factors beyond media exposure, political polarization, and economic conditions play a more prominent role in shaping trust in this particular institution.
+
+It is important to highlight that the lack of statistical significance for certain variables should not undermine their potential influence on trust in the European Parliament. The non-significant estimates may be attributed to factors such as limited sample size, measurement errors, or the complex interplay of various determinants of trust.
+
+The findings from the fixed effects model provide insights into the factors associated with trust in the European Parliament. The positive influence of factors such as net use time, education level, government satisfaction, race discrimination, and death rate indicates the multidimensionality of trust formation in this context. Further research is needed to explore the underlying mechanisms and contextual factors that drive trust dynamics in the European Parliament.
+
+In conclusion, the fixed effects model revealed both significant and non-significant effects of various factors on trust in the European Parliament. The analysis underscores the complexity of trust formation and highlights the importance of considering country-specific factors, individual characteristics, and contextual influences when examining trust in supranational institutions.
 
 ### References
 - Demography of Europe—More women than men. (n.d.). Demography of Europe. Retrieved June 15, 2023, from https://www.istat.it/demografiadelleuropa/bloc-1b.html?lang=it
